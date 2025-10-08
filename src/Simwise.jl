@@ -1,6 +1,8 @@
 module Simwise
 
 using LinearAlgebra
+using SatelliteDynamics
+using SatelliteToolbox
 
 # Core modules
 include("constants.jl")
