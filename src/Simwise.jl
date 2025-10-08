@@ -7,6 +7,9 @@ include("constants.jl")
 include("state.jl")
 include("parameters.jl")
 
+# Exports
+export State, Parameters, rk4_step
+
 # Propagator
 include("propagator/rk4.jl")
 
