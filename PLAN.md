@@ -27,6 +27,10 @@ test/
 ├── propagatorTests.jl
 ├── dynamicsTests.jl
 └── environmentTests.jl
+
+examples/
+├── simpleOrbit.jl
+└── tumblingCubesat.jl
 ```
 
 ## milestone #2 - compute sensor data
@@ -70,6 +74,10 @@ test/
 ├── dynamicsTests.jl
 ├── environmentTests.jl
 └── sensorTests.jl                [NEW]
+
+examples/
+├── simpleOrbit.jl
+└── tumblingCubesat.jl
 ```
 
 ## milestone #3 - hardware in the loop w/ actuator feedback
@@ -117,4 +125,9 @@ test/
 ├── environmentTests.jl
 ├── sensorTests.jl
 └── actuatorTests.jl              [NEW]
+
+examples/
+├── simpleOrbit.jl
+├── tumblingCubesat.jl
+└── hilSimulation.jl              [NEW]
 ```
