@@ -18,12 +18,11 @@ Assumes no perturbations (ideal Keplerian orbit).
 # Notes
 - Only the true anomaly ν changes in two-body motion
 - All other elements (a, e, i, Ω, ω) remain constant
-- Semi-major axis a is stored in km but converted to m for calculations
+- Semi-major axis a is in meters
 """
 function propagate_keplerian(state::State, dt::Float64)
-    # Extract orbital elements (a is in km, convert to m)
-    a_km, e, i, Ω, ω, ν = state.orbital_elements
-    a = a_km * 1e3  # Convert km to m
+    # Extract orbital elements (a is in meters)
+    a, e, i, Ω, ω, ν = state.orbital_elements
 
     # Mean motion [rad/s]
     n = sqrt(μ_earth / a^3)
@@ -53,8 +52,8 @@ function propagate_keplerian(state::State, dt::Float64)
         ν_new += 2π
     end
 
-    # Return updated orbital elements (a in km)
-    return [a_km, e, i, Ω, ω, ν_new]
+    # Return updated orbital elements (a in meters)
+    return [a, e, i, Ω, ω, ν_new]
 end
 
 """

@@ -10,7 +10,7 @@ using Plots
         t0 = 60000.0  # MJD
 
         # Circular LEO at 400 km
-        a = 6378.137 + 400  # [km]
+        a = (6378.137 + 400) * 1e3  # [m]
         e = 0.0
         i = 0.0  # equatorial
         Ω = 0.0
@@ -21,7 +21,7 @@ using Plots
         state = State(q0, ω0, t0, oe0)
 
         # Propagate one orbit
-        n = sqrt(μ_earth / (a*1e3)^3)  # mean motion [rad/s], convert km to m
+        n = sqrt(μ_earth / a^3)  # mean motion [rad/s]
         T = 2π / n  # orbital period [s]
 
         dt = T / 100  # time step
@@ -58,7 +58,7 @@ using Plots
 
             analytical_ν = n .* times
 
-            p1 = plot(times ./ 60, a_vals, ylabel="a [km]", title="Circular Orbit (e=0)", legend=false)
+            p1 = plot(times ./ 60, a_vals, ylabel="a [m]", title="Circular Orbit (e=0)", legend=false)
             p2 = plot(times ./ 60, e_vals, ylabel="e [-]", ylims=(0, 1), legend=false)
             p3 = plot(times ./ 60, i_vals, ylabel="i [rad]", ylims=(0, 2pi), legend=false)
             p4 = plot(times ./ 60, Ω_vals, ylabel="Ω [rad]", ylims=(0, 2pi), legend=false)
@@ -83,7 +83,7 @@ using Plots
         t0 = 60000.0  # MJD
 
         # Eccentric orbit
-        a = 6378.137 + 600  # [km]
+        a = (6378.137 + 600) * 1e3  # [m]
         e = 0.2
         i = 0.0
         Ω = 0.0
@@ -94,7 +94,7 @@ using Plots
         state = State(q0, ω0, t0, oe0)
 
         # Propagate one orbit
-        n = sqrt(μ_earth / (a*1e3)^3)  # mean motion [rad/s], convert km to m
+        n = sqrt(μ_earth / a^3)  # mean motion [rad/s]
         T = 2π / n  # orbital period [s]
 
         dt = T / 100  # time step
@@ -138,7 +138,7 @@ using Plots
 
             mean_anomalies = n .* times
 
-            p1 = plot(times ./ 60, a_vals, ylabel="a [km]", title="Eccentric Orbit (e=0.2)", legend=false)
+            p1 = plot(times ./ 60, a_vals, ylabel="a [m]", title="Eccentric Orbit (e=0.2)", legend=false)
             p2 = plot(times ./ 60, e_vals, ylabel="e [-]", ylims=(0, 1), legend=false)
             p3 = plot(times ./ 60, i_vals, ylabel="i [rad]", ylims=(0, 2pi), legend=false)
             p4 = plot(times ./ 60, Ω_vals, ylabel="Ω [rad]", ylims=(0, 2pi), legend=false)
@@ -162,14 +162,14 @@ using Plots
         t0 = 60000.0
 
         # ISS-like orbit
-        a = 6378.137 + 420  # [km]
+        a = (6378.137 + 420) * 1e3  # [m]
         e = 0.0001
         oe0 = [a, e, 0.0, 0.0, 0.0, 0.0]
 
         state = State(q0, ω0, t0, oe0)
 
         # Theoretical period
-        n = sqrt(μ_earth / (a*1e3)^3)  # convert km to m
+        n = sqrt(μ_earth / a^3)
         T_theory = 2π / n
 
         # Propagate for one full orbital period
