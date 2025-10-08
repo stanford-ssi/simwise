@@ -34,6 +34,13 @@ serial = SerialConnection("/dev/ttyUSB0")
 run_hil_simulation(duration=3600.0, dt=0.01)
 ```
 
+## Running Tests
+
+```bash
+cd test
+julia runtests.jl
+```
+
 ## Structure
 
 ```
