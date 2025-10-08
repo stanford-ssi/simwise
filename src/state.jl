@@ -16,7 +16,7 @@ mutable struct State
     q::Vector{Float64}                  # quaternion from eci to body, scalar-first [qw, qx, qy, qz]
     ω::Vector{Float64}                  # angular velocity in eci [rad/s]
     t::Float64                          # time [MJD]
-    orbital_elements::Vector{Float64}   # keplerian orbital elements, [a, e, i, Ω, ω, ν]
+    orbital_elements::Vector{Float64}   # keplerian orbital elements, km and rad [a, e, i, Ω, ω, ν] ]
 end
 
 # Operator overloading for RK4 integration

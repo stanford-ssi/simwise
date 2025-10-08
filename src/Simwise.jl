@@ -8,7 +8,7 @@ include("state.jl")
 include("parameters.jl")
 
 # Exports
-export State, Parameters, rk4_step
+export State, Parameters, rk4_step, propagate_keplerian, μ_earth
 
 # Integration
 include("integration/rk4.jl")
