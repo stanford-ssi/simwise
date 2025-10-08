@@ -1,4 +1,5 @@
 # src/hardware/serial_interface.jl
+# TODO: UNTESTED CODE
 
 using LibSerialPort
 using StaticArrays

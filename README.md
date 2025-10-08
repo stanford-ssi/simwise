@@ -2,6 +2,8 @@
 
 6-DOF orbital and attitude propagator for SAMWISE ADCS hardware-in-the-loop (HITL) testing.
 
+See PLAN.md for design planning notes. 
+
 ## Features
 
 - **6-DOF Dynamics**: Orbital mechanics and attitude kinematics with environmental models (gravity, magnetic field, drag)
