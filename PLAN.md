@@ -6,7 +6,7 @@ src/
 ├── constants.jl
 ├── state.jl
 ├── parameters.jl
-├── propagator/
+├── integration/
 │   └── rk4.jl
 ├── dynamics/
 │   ├── attitude.jl
@@ -42,7 +42,7 @@ src/
 ├── state.jl
 ├── parameters.jl
 ├── serialInterface.jl            [NEW]
-├── propagator/
+├── integration/
 │   └── rk4.jl
 ├── dynamics/
 │   ├── attitude.jl
@@ -89,7 +89,7 @@ src/
 ├── state.jl
 ├── parameters.jl
 ├── serialInterface.jl
-├── propagator/
+├── integration/
 │   └── rk4.jl
 ├── dynamics/
 │   ├── attitude.jl

@@ -7,8 +7,11 @@ include("constants.jl")
 include("state.jl")
 include("parameters.jl")
 
-# Propagator
-include("propagator/rk4.jl")
+# Exports
+export State, Parameters, rk4_step
+
+# Integration
+include("integration/rk4.jl")
 
 # Dynamics
 include("dynamics/attitude.jl")
