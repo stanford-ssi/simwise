@@ -1,7 +1,5 @@
 # High-level propagator - glue code between dynamics and integration
 
-using SatelliteDynamics: Quaternion
-
 """
     propagate(state, dt, n_steps, params)
 

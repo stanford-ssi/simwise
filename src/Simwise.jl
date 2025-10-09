@@ -10,7 +10,7 @@ include("state.jl")
 include("parameters.jl")
 
 # Exports
-export State, Parameters, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth
+export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth
 
 # Integration
 include("integration/rk4.jl")

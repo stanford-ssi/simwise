@@ -1,6 +1,5 @@
 using Plots
 using LinearAlgebra
-using SatelliteDynamics: Quaternion
 
 @testset "Attitude Dynamics Tests" begin
     @testset "Torque-Free Rigid Body" begin
@@ -30,7 +29,7 @@ using SatelliteDynamics: Quaternion
         # For q = [1, 0, 0, 0] and ω = [0, 0, 0.1]:
         # q_dot = 0.5 * [0, 0, 0, 0.1]
         expected_q_dot = [0.0, 0.0, 0.0, 0.05]
-        @test isapprox(q_dot, expected_q_dot, atol=1e-12)
+        @test isapprox([q_dot.q0, q_dot.q1, q_dot.q2, q_dot.q3], expected_q_dot, atol=1e-12)
     end
 
     @testset "Asymmetric Body (Gyroscopic Effect)" begin

@@ -1,7 +1,6 @@
 # Attitude dynamics
 
 using LinearAlgebra
-using SatelliteDynamics: Quaternion
 
 """
     attitude_dynamics(state, torques, inertia)
@@ -14,7 +13,7 @@ Compute attitude state derivatives (quaternion and angular velocity rates).
 - `inertia::Matrix{Float64}`: Inertia tensor [kg·m²] (3x3, body frame)
 
 # Returns
-- `q_dot::Vector{Float64}`: Quaternion derivative [q0_dot, q1_dot, q2_dot, q3_dot] (NOT normalized)
+- `q_dot::Quat`: Quaternion derivative [q0_dot, q1_dot, q2_dot, q3_dot] (NOT normalized)
 - `ω_dot::Vector{Float64}`: Angular acceleration [rad/s^2] (body frame)
 
 # Equations
@@ -35,13 +34,13 @@ function attitude_dynamics(state::State, torques::Vector{Float64}, inertia::Matr
 
     ωx, ωy, ωz = ω
 
-    # Return as Vector (NOT Quaternion) because Quaternion() auto-normalizes!
-    q_dot = [
+    # Return as Quat (does NOT auto-normalize - safe for derivatives!)
+    q_dot = Quat(
         0.5 * (-ωx * q.q1 - ωy * q.q2 - ωz * q.q3),  # q0_dot
         0.5 * ( ωx * q.q0 + ωz * q.q2 - ωy * q.q3),  # q1_dot
         0.5 * ( ωy * q.q0 - ωz * q.q1 + ωx * q.q3),  # q2_dot
         0.5 * ( ωz * q.q0 + ωy * q.q1 - ωx * q.q2)   # q3_dot
-    ]
+    )
 
     # Euler's rotation equation: I * ω_dot = τ - ω × (I * ω)
     # Therefore: ω_dot = I^-1 * (τ - ω × (I * ω))
