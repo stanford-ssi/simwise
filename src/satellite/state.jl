@@ -1,7 +1,5 @@
 # State vector definition
 
-include("math/quaternions.jl")
-
 """
     State
 
