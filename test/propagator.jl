@@ -1,4 +1,5 @@
 using Plots
+using SatelliteDynamics: Quaternion
 
 @testset "Propagator Tests" begin
     @testset "RK4 Integration" begin
@@ -8,7 +9,7 @@ using Plots
         # Simple derivative function: exponential decay in first orbital element
         function simple_dynamics(state::State, params)
             k = 0.1  # decay constant
-            dq = zeros(4)
+            dq = Quaternion(0.0, 0.0, 0.0, 0.0)
             dω = zeros(3)
             dt_mjd = 1.0 / 86400.0  # 1 second in MJD units
             doe = [-k * state.orbital_elements[1], 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -77,7 +78,7 @@ using Plots
             # Extract current time from state
             t = (state.t - 60000.0) * 86400.0  # convert MJD to seconds from t0
 
-            dq = zeros(4)
+            dq = Quaternion(0.0, 0.0, 0.0, 0.0)
             dω = zeros(3)
             dt_mjd = 1.0 / 86400.0  # 1 second in MJD units
             doe = [A * omega * cos(omega * t), 0.0, 0.0, 0.0, 0.0, 0.0]
