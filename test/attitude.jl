@@ -87,6 +87,7 @@ using LinearAlgebra
         ωx_hist = Float64[]
         ωy_hist = Float64[]
         ωz_hist = Float64[]
+        ω_mag_hist = Float64[]
 
         # Dynamics function for RK4
         function attitude_only_dynamics(state::State, params)
@@ -116,6 +117,7 @@ using LinearAlgebra
             push!(ωx_hist, state.ω[1])
             push!(ωy_hist, state.ω[2])
             push!(ωz_hist, state.ω[3])
+            push!(ω_mag_hist, norm(state.ω))
 
             state = rk4_step(attitude_only_dynamics, state, dt, params)
         end
@@ -172,6 +174,7 @@ using LinearAlgebra
             p3 = plot(times, ωx_hist, label="ωx", lw=2, xlabel="", ylabel="ω [rad/s]", title="Angular Velocity", legend=:right)
             plot!(p3, times, ωy_hist, label="ωy", lw=2)
             plot!(p3, times, ωz_hist, label="ωz", lw=2)
+            plot!(p3, times, ω_mag_hist, label="|ω|", lw=2, linestyle=:dash, color=:black)
 
             p4 = plot(times, H_mag_hist, label="", lw=2, ylim=(0, 1.1 * maximum(H_mag_hist)), xlabel="Time [s]", ylabel="|H| [kg·m²/s]", title="Angular Momentum Magnitude", color=:black)
 
