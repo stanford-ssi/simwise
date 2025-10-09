@@ -8,7 +8,7 @@ src/
 ├── satellite/
 │   └── state.jl
 │   └── parameters.jl
-├── integration/
+├── math/
 |   └── quaternions.jl
 |   └── transforms.jl
 │   └── rk4.jl
@@ -53,7 +53,7 @@ src/
 │       ├── magnetometer.jl
 │       ├── imu.jl
 │       └── gps.jl
-├── integration/
+├── math/
 |   └── quaternions.jl
 |   └── transforms.jl
 │   └── rk4.jl
@@ -108,7 +108,7 @@ src/
 │   └── actuators/                [NEW]
 │       ├── reactionWheels.jl
 │       └── magnetorquers.jl
-├── integration/
+├── math/
 |   └── quaternions.jl
 |   └── transforms.jl
 │   └── rk4.jl
