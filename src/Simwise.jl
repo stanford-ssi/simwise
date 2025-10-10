@@ -7,7 +7,7 @@ using SatelliteToolboxTransformations
 using SatelliteToolboxGeomagneticField
 
 # Exports
-export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth, state_from_oe, orbital_elements_to_eci, magnetic_field_eci, eci_to_geocentric, ned_to_eci, jd_to_gmst
+export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth, state_from_oe, orbital_elements_to_eci, magnetic_field_eci, eci_to_geocentric, ned_to_eci, jd_to_gmst, eci_to_ecef
 
 # Constants
 include("constants.jl")
