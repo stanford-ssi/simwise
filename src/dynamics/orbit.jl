@@ -57,6 +57,56 @@ function propagate_keplerian(state::State, dt::Float64)
 end
 
 """
+    orbital_elements_to_eci(a, e, i, Ω, ω, ν)
+
+Convert Keplerian orbital elements to ECI position and velocity vectors.
+
+# Arguments
+- `a::Float64`: Semi-major axis [m]
+- `e::Float64`: Eccentricity
+- `i::Float64`: Inclination [rad]
+- `Ω::Float64`: Right ascension of ascending node (RAAN) [rad]
+- `ω::Float64`: Argument of periapsis [rad]
+- `ν::Float64`: True anomaly [rad]
+
+# Returns
+- `(r_eci, v_eci)`: Tuple of position [m] and velocity [m/s] vectors in ECI frame
+"""
+function orbital_elements_to_eci(a::Float64, e::Float64, i::Float64, Ω::Float64, ω::Float64, ν::Float64)
+    # Compute position and velocity in perifocal frame
+    p = a * (1 - e^2)  # semi-latus rectum
+    r_mag = p / (1 + e * cos(ν))  # orbital radius
+
+    # Position in perifocal frame (P, Q, W where P points to periapsis)
+    r_pf = r_mag * [cos(ν), sin(ν), 0.0]
+
+    # Velocity in perifocal frame
+    v_pf = sqrt(μ_earth / p) * [-sin(ν), e + cos(ν), 0.0]
+
+    # Rotation matrix from perifocal to ECI
+    # R = R3(-Ω) * R1(-i) * R3(-ω)
+    sin_Ω = sin(Ω)
+    cos_Ω = cos(Ω)
+    sin_i = sin(i)
+    cos_i = cos(i)
+    sin_ω = sin(ω)
+    cos_ω = cos(ω)
+
+    # Combined rotation matrix (perifocal to ECI)
+    R = [
+        cos_Ω*cos_ω - sin_Ω*sin_ω*cos_i    -cos_Ω*sin_ω - sin_Ω*cos_ω*cos_i     sin_Ω*sin_i;
+        sin_Ω*cos_ω + cos_Ω*sin_ω*cos_i    -sin_Ω*sin_ω + cos_Ω*cos_ω*cos_i    -cos_Ω*sin_i;
+        sin_ω*sin_i                          cos_ω*sin_i                          cos_i
+    ]
+
+    # Transform to ECI
+    r_eci = R * r_pf
+    v_eci = R * v_pf
+
+    return (r_eci, v_eci)
+end
+
+"""
     orbital_dynamics(state, forces)
 
 Compute orbital state derivatives (position and velocity rates).

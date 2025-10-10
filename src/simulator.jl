@@ -59,7 +59,7 @@ function propagate(state::State, dt::Float64, n_steps::Int, params::Parameters)
     - `p::Parameters`: Spacecraft parameters
 
     # Returns
-    - `State`: State derivative (dq, dω, dt, doe)
+    - `State`: State derivative (dq, dω, dt, doe, dr_eci, dv_eci)
     """
     function coupled_dynamics(s::State, p::Parameters)
         # TODO: Compute torques from environment models
@@ -77,11 +77,20 @@ function propagate(state::State, dt::Float64, n_steps::Int, params::Parameters)
         # doe = orbital_dynamics(s, forces)
         doe = zeros(6)  # Placeholder until orbital_dynamics is implemented
 
+        # Position and velocity derivatives in ECI
+        r_dot_eci = s.v_eci  # dr/dt = v
+
+        # Acceleration: gravity + external forces
+        r_norm = norm(s.r_eci)
+        a_gravity = -(μ_earth / r_norm^3) * s.r_eci
+        a_external = forces / p.mass
+        v_dot_eci = a_gravity + a_external  # dv/dt = a
+
         # Time derivative (convert dt in seconds to MJD)
         dt_mjd = 1.0 / 86400.0  # 1 second in MJD units
 
         # Return complete derivative state
-        return State(q_dot, ω_dot, dt_mjd, doe)
+        return State(q_dot, ω_dot, dt_mjd, doe, r_dot_eci, v_dot_eci)
     end
 
     # Time-stepping loop
