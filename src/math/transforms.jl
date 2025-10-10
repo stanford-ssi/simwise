@@ -4,21 +4,21 @@ using LinearAlgebra
 using SatelliteToolboxTransformations
 
 """
-    eci_to_geocentric(r_eci)
+    ecef_to_geocentric(r_ecef)
 
-Convert ECI position vector to geocentric spherical coordinates.
+Convert ECEF position vector to geocentric spherical coordinates.
 
 # Arguments
-- `r_eci::Vector{Float64}`: Position in ECI frame [m]
+- `r_ecef::Vector{Float64}`: Position in ECEF frame [m]
 
 # Returns
 - `(r, λ, Ω)`: Tuple of (radius [m], geocentric latitude [rad], longitude [rad])
 """
-function eci_to_geocentric(r_eci::Vector{Float64})
-    x, y, z = r_eci
+function ecef_to_geocentric(r_ecef::Vector{Float64})
+    x, y, z = r_ecef
 
     # Radius from Earth center
-    r = norm(r_eci)
+    r = norm(r_ecef)
 
     # Geocentric latitude: angle from equatorial plane
     λ = asin(z / r)
@@ -88,12 +88,13 @@ Transform vector from ECI to ECEF frame.
 """
 function eci_to_ecef(r_eci::Vector{Float64}, gmst::Float64)
     # Rotation from ECI to ECEF (about Z-axis by -GMST angle)
-    sin_gmst = sin(-gmst)
-    cos_gmst = cos(-gmst)
+    # This is the inverse of ECEF to ECI rotation
+    sin_gmst = sin(gmst)
+    cos_gmst = cos(gmst)
 
     r_ecef = [
-        cos_gmst * r_eci[1] - sin_gmst * r_eci[2],
-        sin_gmst * r_eci[1] + cos_gmst * r_eci[2],
+        cos_gmst * r_eci[1] + sin_gmst * r_eci[2],
+        -sin_gmst * r_eci[1] + cos_gmst * r_eci[2],
         r_eci[3]
     ]
 
