@@ -24,3 +24,33 @@ function jd_to_gmst(jd::Float64)
 
     return gmst_rad
 end
+
+function mjd_to_jd(mjd::Float64)
+    return mjd + 2400000.5
+end
+
+function jd_to_mjd(jd::Float64)
+    return jd - 2400000.5
+end
+
+function mjd_to_gmst(mjd::Float64)
+    jd = mjd_to_jd(mjd)
+    return jd_to_gmst(jd)
+end
+
+function jd_to_caldate(jd::Float64)
+    return SatelliteDynamics.jd_to_caldate(jd)
+end
+
+function caldate_to_jd(date::String)
+    return SatelliteDynamics.caldate_to_jd(date)
+end
+
+function mjd_to_caldate(mjd::Float64)
+    return SatelliteDynamics.mjd_to_caldate(mjd)
+end
+
+function caldate_to_mjd(date::String)
+    jd = SatelliteDynamics.caldate_to_jd(date)
+    return jd_to_mjd(jd)
+end
