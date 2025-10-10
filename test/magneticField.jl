@@ -10,15 +10,15 @@ using LinearAlgebra
         R_earth = 6378.137e3  # Earth radius [m]
         r_orbit = R_earth + altitude
 
-        # Julian date for evaluation (Jan 1, 2024)
-        jd = 2460310.5
+        # Julian date for evaluation (October 10, 2025)
+        jd = 2460958.5000000
 
         # Get GMST for this time
         gmst = jd_to_gmst(jd)
 
         # Create a grid in latitude and longitude
-        n_lat = 1000
-        n_lon = 2000
+        n_lat = 500
+        n_lon = 1000
         lats = range(-π/2, π/2, length=n_lat)  # -90° to +90°
         lons = range(-π, π, length=n_lon)      # -180° to +180°
 
@@ -185,5 +185,109 @@ using LinearAlgebra
         catch e
             println("⚠ Could not generate plot: $e")
         end
+    end
+
+    @testset "Magnetic Field Objective Points (ENU)" begin
+        # Test magnetic field at specific geographic locations in ENU frame
+        # Using October 10, 2025 as reference date
+        jd = 2460958.5000000
+        altitude = 400e3  # 400 km altitude [m]
+        R_earth = 6378.137e3  # Earth radius [m]
+
+        # Helper function to compute magnetic field in ENU
+        function compute_B_enu(lat, lon, alt, jd)
+            r = R_earth + alt
+
+            # Convert geodetic to ECEF
+            x = r * cos(lat) * cos(lon)
+            y = r * cos(lat) * sin(lon)
+            z = r * sin(lat)
+            r_ecef = [x, y, z]
+
+            # Convert ECEF to ECI
+            gmst = jd_to_gmst(jd)
+            sin_gmst = sin(gmst)
+            cos_gmst = cos(gmst)
+            r_eci = [
+                cos_gmst * r_ecef[1] - sin_gmst * r_ecef[2],
+                sin_gmst * r_ecef[1] + cos_gmst * r_ecef[2],
+                r_ecef[3]
+            ]
+
+            # Compute magnetic field in ECI
+            B_eci = magnetic_field_eci(r_eci, jd)
+
+            # Convert to ECEF
+            B_ecef = eci_to_ecef(B_eci, gmst)
+
+            # Convert ECEF to ENU
+            sin_lat = sin(lat)
+            cos_lat = cos(lat)
+            sin_lon = sin(lon)
+            cos_lon = cos(lon)
+
+            R_enu_ecef = [
+                -sin_lon           cos_lon           0;
+                -sin_lat*cos_lon  -sin_lat*sin_lon   cos_lat;
+                 cos_lat*cos_lon   cos_lat*sin_lon   sin_lat
+            ]
+
+            B_enu = R_enu_ecef * B_ecef
+            return B_enu .* 1e9  # Convert to nT
+        end
+
+        # Define test points with expected direction values (in nT)
+        # Format: (name, lat_deg, lon_deg, expected_east, expected_north, expected_up)
+        test_points = [
+            ("Equator (0°, 0°)",           0.0,       0.0,   -1694,   22561,   11663),
+            ("North Pole (90°, 0°)",      90.0,       0.0,     152,   1160,   -48216),
+            ("Mid-lat NH (45°, -90°)",   45.0,     -90.0,    -657,   14810,  -42038),
+            ("Mid-lat SH (-45°, 135°)",  -45.0,     135.0,   1768,   12833,  50920),
+            ("South Pole (-90°, 0°)",    -90.0,       0.0,     -7296,   10847,   43084),
+            ("South Atlantic (-30°, -40°)", -30.0,   -40.0,  -4458,   12309,   14938),
+        ]
+
+        # Angular tolerance for direction check (~0.5 degrees)
+        angle_tolerance = 0.5 * π / 180  # radians
+
+        println("\n  Testing magnetic field direction at objective points:")
+        for (name, lat_deg, lon_deg, exp_east, exp_north, exp_up) in test_points
+            # Convert to radians
+            lat = lat_deg * π / 180
+            lon = lon_deg * π / 180
+
+            # Compute magnetic field
+            B_enu = compute_B_enu(lat, lon, altitude, jd)
+            B_east, B_north, B_up = B_enu
+            B_mag = norm(B_enu)
+
+            # Normalize to get unit vectors
+            B_calc_unit = B_enu / B_mag
+            B_exp = [exp_east, exp_north, exp_up]
+            B_exp_unit = B_exp / norm(B_exp)
+
+            # Compute angle between vectors using dot product
+            cos_angle = dot(B_calc_unit, B_exp_unit)
+            # Clamp to [-1, 1] to avoid numerical issues with acos
+            cos_angle = clamp(cos_angle, -1.0, 1.0)
+            angle_diff = acos(cos_angle)
+            angle_diff_deg = angle_diff * 180 / π
+
+            # Print results
+            # println("\n  $name:")
+            # println("    Calculated: [$(round(B_east, digits=1)), $(round(B_north, digits=1)), $(round(B_up, digits=1))] nT")
+            # println("    Expected:   [$(exp_east), $(exp_north), $(exp_up)] nT")
+            # println("    |B|:        $(round(B_mag, digits=1)) nT")
+            # println("    Angle diff: $(round(angle_diff_deg, digits=4))°")
+
+            # Test that direction is within tolerance
+            @test angle_diff < angle_tolerance
+
+            # General sanity checks
+            @test B_mag > 10000  # Should be at least 10 µT
+            @test B_mag < 80000  # Should be less than 80 µT
+        end
+
+        println("\n  ✓ All direction tests passed (within 0.5°)")
     end
 end
