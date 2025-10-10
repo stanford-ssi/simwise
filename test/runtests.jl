@@ -7,4 +7,5 @@ using .Simwise
     include("rk4.jl")
     include("orbit.jl")
     include("attitude.jl")
+    include("magneticField.jl")
 end
