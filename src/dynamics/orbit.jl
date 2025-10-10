@@ -57,6 +57,76 @@ function propagate_keplerian(state::State, dt::Float64)
 end
 
 """
+    state_from_oe(q, ω, t, orbital_elements)
+
+Create a State from orbital elements, automatically computing r_eci and v_eci.
+
+# Arguments
+- `q::Vector{Float64}`: Quaternion [q0, q1, q2, q3] (scalar-first)
+- `ω::Vector{Float64}`: Angular velocity [rad/s]
+- `t::Float64`: Time [MJD]
+- `orbital_elements::Vector{Float64}`: [a, e, i, Ω, ω, ν]
+
+# Returns
+- `State`: State with computed r_eci and v_eci
+"""
+function state_from_oe(q::Vector{Float64}, ω_body::Vector{Float64}, t::Float64, orbital_elements::Vector{Float64})
+    a, e, i, Ω, ω_arg, ν = orbital_elements
+    r_eci, v_eci = orbital_elements_to_eci(a, e, i, Ω, ω_arg, ν)
+    return State(q, ω_body, t, orbital_elements, r_eci, v_eci)
+end
+
+"""
+    orbital_elements_to_eci(a, e, i, Ω, ω, ν)
+
+Convert Keplerian orbital elements to ECI position and velocity vectors.
+
+# Arguments
+- `a::Float64`: Semi-major axis [m]
+- `e::Float64`: Eccentricity
+- `i::Float64`: Inclination [rad]
+- `Ω::Float64`: Right ascension of ascending node (RAAN) [rad]
+- `ω::Float64`: Argument of periapsis [rad]
+- `ν::Float64`: True anomaly [rad]
+
+# Returns
+- `(r_eci, v_eci)`: Tuple of position [m] and velocity [m/s] vectors in ECI frame
+"""
+function orbital_elements_to_eci(a::Float64, e::Float64, i::Float64, Ω::Float64, ω::Float64, ν::Float64)
+    # Compute position and velocity in perifocal frame
+    p = a * (1 - e^2)  # semi-latus rectum
+    r_mag = p / (1 + e * cos(ν))  # orbital radius
+
+    # Position in perifocal frame (P, Q, W where P points to periapsis)
+    r_pf = r_mag * [cos(ν), sin(ν), 0.0]
+
+    # Velocity in perifocal frame
+    v_pf = sqrt(μ_earth / p) * [-sin(ν), e + cos(ν), 0.0]
+
+    # Rotation matrix from perifocal to ECI
+    # R = R3(-Ω) * R1(-i) * R3(-ω)
+    sin_Ω = sin(Ω)
+    cos_Ω = cos(Ω)
+    sin_i = sin(i)
+    cos_i = cos(i)
+    sin_ω = sin(ω)
+    cos_ω = cos(ω)
+
+    # Combined rotation matrix (perifocal to ECI)
+    R = [
+        cos_Ω*cos_ω - sin_Ω*sin_ω*cos_i    -cos_Ω*sin_ω - sin_Ω*cos_ω*cos_i     sin_Ω*sin_i;
+        sin_Ω*cos_ω + cos_Ω*sin_ω*cos_i    -sin_Ω*sin_ω + cos_Ω*cos_ω*cos_i    -cos_Ω*sin_i;
+        sin_ω*sin_i                          cos_ω*sin_i                          cos_i
+    ]
+
+    # Transform to ECI
+    r_eci = R * r_pf
+    v_eci = R * v_pf
+
+    return (r_eci, v_eci)
+end
+
+"""
     orbital_dynamics(state, forces)
 
 Compute orbital state derivatives (position and velocity rates).
