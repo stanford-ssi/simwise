@@ -1,4 +1,4 @@
-## milestone #1 - dual attitude / orbit propagator, no controls
+## milestone #1 - dual attitude / orbit propagator with simulated sensor data
 
 ```
 src/
@@ -8,36 +8,59 @@ src/
 ├── satellite/
 │   └── state.jl
 │   └── parameters.jl
+│   └── sensors/                    [TODO]
+│       ├── sunSensors.jl
+│       ├── magnetometer.jl
+│       ├── imu.jl
+│       └── gps.jl
 ├── math/
 |   └── quaternions.jl
 |   └── transforms.jl
 │   └── rk4.jl
 ├── dynamics/
 │   ├── attitude.jl
-│   ├── orbit.jl
-│   └── torques/
-│       ├── drag.jl
-│       └── gravityGradient.jl
-├── world/
-│   └── atmosphere.jl
-├── visualization/
+│   └── orbit.jl
+├── world/                          [TODO]
+│   ├── magneticField.jl          
+│   └── sunVector.jl              
+├── visualization/                  [TODO]
 │   ├── orbitViz.jl
 │   └── attitudeViz.jl
-
-
-test/
-├── runtests.jl
-├── attitude.jl
-├── orbit.jl
-├── rk4.jl
-└── plots/
-
-examples/
-├── simpleOrbit.jl
-└── tumblingCubesat.jl
 ```
 
-## milestone #2 - compute sensor data
+## milestone #2 - send sensor data to flight computer
+
+```
+src/
+├── Simwise.jl            # main module file
+├── constants.jl
+├── simulator.jl
+├── serialInterface.jl        [TODO - and flight computer side]
+├── satellite/
+│   └── state.jl
+│   └── parameters.jl
+│   └── sensors/
+│       ├── sunSensors.jl
+│       ├── magnetometer.jl
+│       ├── imu.jl
+│       └── gps.jl
+├── math/
+|   └── quaternions.jl
+|   └── transforms.jl
+│   └── rk4.jl
+├── dynamics/
+│   ├── attitude.jl
+│   └── orbit.jl
+├── world/                        
+│   ├── magneticField.jl          
+│   └── sunVector.jl              
+├── visualization/                
+│   ├── orbitViz.jl
+│   └── attitudeViz.jl
+```
+
+
+## milestone #3 - perturbation torques + actuator inputs from flight computer HITL
 
 ```
 src/
@@ -47,8 +70,8 @@ src/
 ├── satellite/
 │   ├── state.jl
 │   ├── parameters.jl
-│   ├── serialInterface.jl        [NEW]
-│   └── sensors/                  [NEW]
+│   ├── serialInterface.jl          [TODO - add actuator receiving side]
+│   └── sensors/                
 │       ├── sunSensors.jl
 │       ├── magnetometer.jl
 │       ├── imu.jl
@@ -60,86 +83,15 @@ src/
 ├── dynamics/
 │   ├── attitude.jl
 │   ├── orbit.jl
-│   ├── forces/                   [NEW]
-│   │   └── j2.jl                 [NEW]
-│   └── torques/
+│   └── torques/                    [TODO]
 │       ├── drag.jl
 │       ├── gravityGradient.jl
-│       └── actuator.jl           [NEW]
+│       └── actuator.jl           
 ├── world/
-│   ├── atmosphere.jl
-│   ├── magneticField.jl          [NEW]
-│   └── j2.jl                     [NEW]
+│   ├── atmosphere.jl               [TODO]
+│   ├── magneticField.jl          
+│   └── sunVector.jl              
 ├── visualization/
 │   ├── orbitViz.jl
 │   └── attitudeViz.jl
-
-test/
-├── runtests.jl
-├── attitude.jl
-├── orbit.jl
-├── rk4.jl
-├── sensorTests.jl                [NEW]
-└── plots/
-
-examples/
-├── simpleOrbit.jl
-├── tumblingCubesat.jl
-└── hilSimulation.jl              
-
-```
-
-## milestone #3 - hardware in the loop w/ actuator feedback
-
-```
-src/
-├── Simwise.jl
-├── constants.jl
-├── simulator.jl
-├── satellite/
-│   ├── state.jl
-│   ├── parameters.jl
-│   ├── serialInterface.jl
-│   ├── sensors/
-│   │   ├── sunSensors.jl
-│   │   ├── magnetometer.jl
-│   │   ├── imu.jl
-│   │   └── gps.jl
-│   └── actuators/                [NEW]
-│       ├── reactionWheels.jl
-│       └── magnetorquers.jl
-├── math/
-|   └── quaternions.jl
-|   └── transforms.jl
-│   └── rk4.jl
-├── dynamics/
-│   ├── attitude.jl
-│   ├── orbit.jl
-│   ├── forces/
-│   │   └── j2.jl
-│   └── torques/
-│       ├── drag.jl
-│       ├── gravityGradient.jl
-│       └── actuator.jl
-├── world/
-│   ├── atmosphere.jl
-│   ├── magneticField.jl
-│   └── j2.jl
-├── visualization/
-│   ├── orbitViz.jl
-│   └── attitudeViz.jl
-
-test/
-├── runtests.jl
-├── attitude.jl
-├── orbit.jl
-├── rk4.jl
-├── sensorTests.jl
-├── actuatorTests.jl              [NEW]
-└── plots/
-
-examples/
-├── simpleOrbit.jl
-├── tumblingCubesat.jl
-└── hilSimulation.jl              
 ```
