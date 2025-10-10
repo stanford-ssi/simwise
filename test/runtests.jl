@@ -8,4 +8,5 @@ using .Simwise
     include("orbit.jl")
     include("attitude.jl")
     include("magneticField.jl")
+    include("sunVector.jl")
 end
