@@ -1,4 +1,5 @@
 using Plots
+using LinearAlgebra
 
 @testset "Orbital Dynamics Tests" begin
     @testset "Keplerian Propagation - Circular Orbit" begin
@@ -18,7 +19,7 @@ using Plots
         ν0 = 0.0
         oe0 = [a, e, i, Ω, ω, ν0]
 
-        state = State(q0, ω0, t0, oe0)
+        state = state_from_oe(q0, ω0, t0, oe0)
 
         # Propagate one orbit
         n = sqrt(μ_earth / a^3)  # mean motion [rad/s]
@@ -29,19 +30,25 @@ using Plots
 
         times = Float64[]
         oe_history = []
+        r_eci_history = []
+        v_eci_history = []
 
         for i in 1:n_steps
             t = (i-1) * dt
             push!(times, t)
             push!(oe_history, copy(state.orbital_elements))
+            push!(r_eci_history, copy(state.r_eci))
+            push!(v_eci_history, copy(state.v_eci))
 
             oe_new = propagate_keplerian(state, dt)
-            state = State(state.q, state.ω, state.t + dt/86400.0, oe_new)
+            state = state_from_oe([state.q.q0, state.q.q1, state.q.q2, state.q.q3], state.ω, state.t + dt/86400.0, oe_new)
         end
 
         # Record final state after all propagations
         push!(times, n_steps * dt)
         push!(oe_history, copy(state.orbital_elements))
+        push!(r_eci_history, copy(state.r_eci))
+        push!(v_eci_history, copy(state.v_eci))
 
         # Test that we completed one full orbit
         final_anomaly = oe_history[end][6]
@@ -69,6 +76,37 @@ using Plots
             p = plot(p1, p2, p3, p4, p5, p6, layout=(3,2), size=(800, 900))
             savefig(p, "plots/orbit_circular.png")
             println("✓ Circular orbit plot saved to test/plots/orbit_circular.png")
+
+            # Plot r_eci and v_eci
+            r_x = [r[1] for r in r_eci_history] ./ 1e3  # Convert to km
+            r_y = [r[2] for r in r_eci_history] ./ 1e3
+            r_z = [r[3] for r in r_eci_history] ./ 1e3
+            r_mag = [norm(r) for r in r_eci_history] ./ 1e3
+
+            v_x = [v[1] for v in v_eci_history] ./ 1e3  # Convert to km/s
+            v_y = [v[2] for v in v_eci_history] ./ 1e3
+            v_z = [v[3] for v in v_eci_history] ./ 1e3
+            v_mag = [norm(v) for v in v_eci_history] ./ 1e3
+
+            pr1 = plot(times ./ 60, r_x, label="r_x", ylabel="Position [km]", title="ECI Position (Circular)", lw=2)
+            plot!(pr1, times ./ 60, r_y, label="r_y", lw=2)
+            plot!(pr1, times ./ 60, r_z, label="r_z", lw=2)
+
+            pr2 = plot(times ./ 60, r_mag, ylims=(0, maximum(r_mag) * 1.1), label="||r||", ylabel="Magnitude [km]", xlabel="Time [min]", lw=2, legend=false)
+
+            pv1 = plot(times ./ 60, v_x, label="v_x", ylabel="Velocity [km/s]", title="ECI Velocity (Circular)", lw=2)
+            plot!(pv1, times ./ 60, v_y, label="v_y", lw=2)
+            plot!(pv1, times ./ 60, v_z, label="v_z", lw=2)
+
+            pv2 = plot(times ./ 60, v_mag, ylims=(0, maximum(v_mag) * 1.1), label="||v||", ylabel="Magnitude [km/s]", xlabel="Time [min]", lw=2, legend=false)
+
+            # 2D trajectory plot
+            ptraj = plot(r_x, r_y, aspect_ratio=:equal, label="Orbit", xlabel="X [km]", ylabel="Y [km]", title="Orbital Trajectory (XY)", lw=2)
+            scatter!(ptraj, [0], [0], label="Earth", markersize=8, color=:blue)
+
+            p_state = plot(pr1, pr2, pv1, pv2, ptraj, layout=(3,2), size=(800, 900))
+            savefig(p_state, "plots/orbit_circular_state.png")
+            println("✓ Circular orbit state plot saved to test/plots/orbit_circular_state.png")
         catch e
             println("⚠ Could not generate plot: $e")
         end
@@ -91,7 +129,7 @@ using Plots
         ν0 = 0.0
         oe0 = [a, e, i, Ω, ω, ν0]
 
-        state = State(q0, ω0, t0, oe0)
+        state = state_from_oe(q0, ω0, t0, oe0)
 
         # Propagate one orbit
         n = sqrt(μ_earth / a^3)  # mean motion [rad/s]
@@ -102,19 +140,25 @@ using Plots
 
         times = Float64[]
         oe_history = []
+        r_eci_history = []
+        v_eci_history = []
 
         for i in 1:n_steps
             t = (i-1) * dt
             push!(times, t)
             push!(oe_history, copy(state.orbital_elements))
+            push!(r_eci_history, copy(state.r_eci))
+            push!(v_eci_history, copy(state.v_eci))
 
             oe_new = propagate_keplerian(state, dt)
-            state = State(state.q, state.ω, state.t + dt/86400.0, oe_new)
+            state = state_from_oe([state.q.q0, state.q.q1, state.q.q2, state.q.q3], state.ω, state.t + dt/86400.0, oe_new)
         end
 
         # Record final state after all propagations
         push!(times, n_steps * dt)
         push!(oe_history, copy(state.orbital_elements))
+        push!(r_eci_history, copy(state.r_eci))
+        push!(v_eci_history, copy(state.v_eci))
 
         # Test that we completed one full orbit
         final_anomaly = oe_history[end][6]
@@ -149,6 +193,37 @@ using Plots
             p = plot(p1, p2, p3, p4, p5, p6, layout=(3,2), size=(800, 900))
             savefig(p, "plots/orbit_eccentric.png")
             println("✓ Eccentric orbit plot saved to test/plots/orbit_eccentric.png")
+
+            # Plot r_eci and v_eci
+            r_x = [r[1] for r in r_eci_history] ./ 1e3  # Convert to km
+            r_y = [r[2] for r in r_eci_history] ./ 1e3
+            r_z = [r[3] for r in r_eci_history] ./ 1e3
+            r_mag = [norm(r) for r in r_eci_history] ./ 1e3
+
+            v_x = [v[1] for v in v_eci_history] ./ 1e3  # Convert to km/s
+            v_y = [v[2] for v in v_eci_history] ./ 1e3
+            v_z = [v[3] for v in v_eci_history] ./ 1e3
+            v_mag = [norm(v) for v in v_eci_history] ./ 1e3
+
+            pr1 = plot(times ./ 60, r_x, label="r_x", ylabel="Position [km]", title="ECI Position (Eccentric)", lw=2)
+            plot!(pr1, times ./ 60, r_y, label="r_y", lw=2)
+            plot!(pr1, times ./ 60, r_z, label="r_z", lw=2)
+
+            pr2 = plot(times ./ 60, r_mag, ylims=(0, maximum(r_mag) * 1.1), label="||r||", ylabel="Magnitude [km]", xlabel="Time [min]", lw=2, legend=false)
+
+            pv1 = plot(times ./ 60, v_x, label="v_x", ylabel="Velocity [km/s]", title="ECI Velocity (Eccentric)", lw=2)
+            plot!(pv1, times ./ 60, v_y, label="v_y", lw=2)
+            plot!(pv1, times ./ 60, v_z, label="v_z", lw=2)
+
+            pv2 = plot(times ./ 60, v_mag, ylims=(0, maximum(v_mag) * 1.1), label="||v||", ylabel="Magnitude [km/s]", xlabel="Time [min]", lw=2, legend=false)
+
+            # 2D trajectory plot - shows elliptical shape
+            ptraj = plot(r_x, r_y, aspect_ratio=:equal, label="Orbit", xlabel="X [km]", ylabel="Y [km]", title="Orbital Trajectory (XY)", lw=2)
+            scatter!(ptraj, [0], [0], label="Earth", markersize=8, color=:blue)
+
+            p_state = plot(pr1, pr2, pv1, pv2, ptraj, layout=(3,2), size=(800, 900))
+            savefig(p_state, "plots/orbit_eccentric_state.png")
+            println("✓ Eccentric orbit state plot saved to test/plots/orbit_eccentric_state.png")
         catch e
             println("⚠ Could not generate plot: $e")
         end
@@ -166,7 +241,7 @@ using Plots
         e = 0.0001
         oe0 = [a, e, 0.0, 0.0, 0.0, 0.0]
 
-        state = State(q0, ω0, t0, oe0)
+        state = state_from_oe(q0, ω0, t0, oe0)
 
         # Theoretical period
         n = sqrt(μ_earth / a^3)
@@ -178,7 +253,7 @@ using Plots
 
         for i in 1:n_steps
             oe_new = propagate_keplerian(state, dt)
-            state = State(state.q, state.ω, state.t + dt/86400.0, oe_new)
+            state = state_from_oe([state.q.q0, state.q.q1, state.q.q2, state.q.q3], state.ω, state.t + dt/86400.0, oe_new)
         end
 
         elapsed_time = n_steps * dt

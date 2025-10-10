@@ -12,7 +12,9 @@ using Plots
             dω = zeros(3)
             dt_mjd = 1.0 / 86400.0  # 1 second in MJD units
             doe = [-k * state.orbital_elements[1], 0.0, 0.0, 0.0, 0.0, 0.0]
-            return State(dq, dω, dt_mjd, doe)
+            dr_eci = zeros(3)
+            dv_eci = zeros(3)
+            return State(dq, dω, dt_mjd, doe, dr_eci, dv_eci)
         end
 
         # Initial state
@@ -20,7 +22,7 @@ using Plots
         ω0 = [0.0, 0.0, 0.0]
         t0 = 60000.0  # MJD
         oe0 = [7000e3, 0.0, 0.0, 0.0, 0.0, 0.0]  # only first element varies
-        state0 = State(q0, ω0, t0, oe0)
+        state0 = state_from_oe(q0, ω0, t0, oe0)
 
         # Dummy parameters
         params = Parameters(10.0, [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0], 0.01, 2.2)
@@ -81,7 +83,9 @@ using Plots
             dω = zeros(3)
             dt_mjd = 1.0 / 86400.0  # 1 second in MJD units
             doe = [A * omega * cos(omega * t), 0.0, 0.0, 0.0, 0.0, 0.0]
-            return State(dq, dω, dt_mjd, doe)
+            dr_eci = zeros(3)
+            dv_eci = zeros(3)
+            return State(dq, dω, dt_mjd, doe, dr_eci, dv_eci)
         end
 
         # Initial state
@@ -90,7 +94,7 @@ using Plots
         t0 = 60000.0  # MJD
         a0 = 7000e3  # initial semi-major axis [m]
         oe0 = [a0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        state0 = State(q0, ω0, t0, oe0)
+        state0 = state_from_oe(q0, ω0, t0, oe0)
 
         # Dummy parameters
         params = Parameters(10.0, [1.0 0.0 0.0; 0.0 1.0 0.0; 0.0 0.0 1.0], 0.01, 2.2)

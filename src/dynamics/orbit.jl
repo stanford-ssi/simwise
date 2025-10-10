@@ -57,6 +57,26 @@ function propagate_keplerian(state::State, dt::Float64)
 end
 
 """
+    state_from_oe(q, ω, t, orbital_elements)
+
+Create a State from orbital elements, automatically computing r_eci and v_eci.
+
+# Arguments
+- `q::Vector{Float64}`: Quaternion [q0, q1, q2, q3] (scalar-first)
+- `ω::Vector{Float64}`: Angular velocity [rad/s]
+- `t::Float64`: Time [MJD]
+- `orbital_elements::Vector{Float64}`: [a, e, i, Ω, ω, ν]
+
+# Returns
+- `State`: State with computed r_eci and v_eci
+"""
+function state_from_oe(q::Vector{Float64}, ω_body::Vector{Float64}, t::Float64, orbital_elements::Vector{Float64})
+    a, e, i, Ω, ω_arg, ν = orbital_elements
+    r_eci, v_eci = orbital_elements_to_eci(a, e, i, Ω, ω_arg, ν)
+    return State(q, ω_body, t, orbital_elements, r_eci, v_eci)
+end
+
+"""
     orbital_elements_to_eci(a, e, i, Ω, ω, ν)
 
 Convert Keplerian orbital elements to ECI position and velocity vectors.
