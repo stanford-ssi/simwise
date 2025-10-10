@@ -11,7 +11,7 @@ using LinearAlgebra
         ω0 = [0.0, 0.0, 0.1]  # 0.1 rad/s about z-axis
         t0 = 60000.0  # MJD
         oe0 = [7000e3, 0.0, 0.0, 0.0, 0.0, 0.0]
-        state0 = State(q0, ω0, t0, oe0)
+        state0 = state_from_oe(q0, ω0, t0, oe0)
 
         # Spherical inertia (symmetric)
         I = diagm([1.0, 1.0, 1.0])  # kg·m²
@@ -41,7 +41,7 @@ using LinearAlgebra
         ω0 = [0.5, 0.0, 0.0]  # Spin about x-axis
         t0 = 60000.0
         oe0 = [7000e3, 0.0, 0.0, 0.0, 0.0, 0.0]
-        state0 = State(q0, ω0, t0, oe0)
+        state0 = state_from_oe(q0, ω0, t0, oe0)
 
         # Asymmetric inertia (like a satellite with extended solar panels)
         I = diagm([0.5, 2.0, 2.0])  # kg·m²
@@ -69,7 +69,7 @@ using LinearAlgebra
         ω0 = [0.05, 0.02, 0.01]  # rad/s - gentle tumbling motion
         t0 = 60000.0
         oe0 = [7000e3, 0.0, 0.0, 0.0, 0.0, 0.0]
-        state0 = State(q0, ω0, t0, oe0)
+        state0 = state_from_oe(q0, ω0, t0, oe0)
 
         # CubeSat-like inertia (slightly asymmetric)
         I = diagm([0.01, 0.012, 0.015])  # kg·m²
@@ -96,10 +96,12 @@ using LinearAlgebra
 
             # For this test, we don't care about orbital dynamics
             doe = zeros(6)
+            dr_eci = zeros(3)
+            dv_eci = zeros(3)
             # Time derivative: d(MJD)/d(second) = 1/86400
             dt_mjd = 1.0 / 86400.0
 
-            return State(q_dot, ω_dot, dt_mjd, doe)
+            return State(q_dot, ω_dot, dt_mjd, doe, dr_eci, dv_eci)
         end
 
         # Dummy parameters (not used)

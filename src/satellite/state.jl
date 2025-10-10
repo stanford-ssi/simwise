@@ -1,7 +1,5 @@
 # State vector definition
 
-include("../dynamics/orbit.jl")
-
 """
     State
 
@@ -26,16 +24,15 @@ mutable struct State
 end
 
 # NOTE: Quaternion does NOT auto-normalize - caller must normalize if needed
-# Automatically computes r_eci and v_eci from orbital elements
-function State(q::Vector{Float64}, ω::Vector{Float64}, t::Float64, orbital_elements::Vector{Float64})
+# NOTE: r_eci and v_eci default to zeros - use state_from_oe() to compute from orbital elements
+function State(q::Vector{Float64}, ω::Vector{Float64}, t::Float64, orbital_elements::Vector{Float64},
+               r_eci::Vector{Float64}=zeros(3), v_eci::Vector{Float64}=zeros(3))
     @assert length(q) == 4 "Quaternion must have 4 elements (scalar-first: q0, q1, q2, q3)"
     @assert length(ω) == 3 "Angular velocity must have 3 elements"
     @assert length(orbital_elements) == 6 "Orbital elements must have 6 elements [a, e, i, Ω, ω, ν]"
+    @assert length(r_eci) == 3 "r_eci must have 3 elements"
+    @assert length(v_eci) == 3 "v_eci must have 3 elements"
     q_quat = Quat(q[1], q[2], q[3], q[4])  # scalar-first, does NOT normalize
-
-    # Compute r_eci and v_eci from orbital elements
-    a, e, i, Ω, ω_arg, ν = orbital_elements
-    r_eci, v_eci = orbital_elements_to_eci(a, e, i, Ω, ω_arg, ν)
 
     return State(q_quat, ω, t, orbital_elements, r_eci, v_eci)
 end
