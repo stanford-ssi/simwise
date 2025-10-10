@@ -96,11 +96,11 @@ Transform vector from ECI to body frame.
 
 # Arguments
 - `r_eci::Vector{Float64}`: Vector in ECI frame
-- `q::Vector{Float64}`: Attitude quaternion
+- `q_eci_to_body::Vector{Float64}`: Attitude quaternion from ECI to body (scalar-first: [q0, q1, q2, q3])
 
 # Returns
 - `Vector{Float64}`: Vector in body frame
 """
-function eci_to_body(r_eci::Vector{Float64}, q::Vector{Float64})
+function eci_to_body(r_eci::Vector{Float64}, q_eci_to_body::Vector{Float64})
     # TODO: Implement ECI to body frame transformation
 end
