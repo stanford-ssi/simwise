@@ -3,9 +3,11 @@ module Simwise
 using LinearAlgebra
 using SatelliteDynamics
 using SatelliteToolbox
+using SatelliteToolboxTransformations
+using SatelliteToolboxGeomagneticField
 
 # Exports
-export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth
+export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth, state_from_oe, orbital_elements_to_eci
 
 # Constants
 include("constants.jl")
@@ -13,6 +15,7 @@ include("constants.jl")
 # Math pure utilities (pure functions, no type dependencies)
 include("math/quaternions.jl")
 include("math/transforms.jl")
+include("math/time.jl")
 
 # Core types
 include("satellite/state.jl")
@@ -29,6 +32,7 @@ include("dynamics/torques/gravityGradient.jl")
 
 # World models
 include("world/atmosphere.jl")
+include("world/magneticField.jl")
 
 # Visualization
 include("visualization/orbitViz.jl")
