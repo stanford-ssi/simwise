@@ -143,6 +143,13 @@ using LinearAlgebra
             push!(H_mag_hist, norm(H))
         end
 
+        # Compute quaternion magnitude over time
+        q_mag_hist = Float64[]
+        for i in 1:length(times)
+            q_norm = sqrt(q0_hist[i]^2 + q1_hist[i]^2 + q2_hist[i]^2 + q3_hist[i]^2)
+            push!(q_mag_hist, q_norm)
+        end
+
         # Convert quaternions to Euler angles (roll, pitch, yaw) in degrees
         roll_hist = Float64[]
         pitch_hist = Float64[]
@@ -176,9 +183,11 @@ using LinearAlgebra
             plot!(p3, times, ωz_hist, label="ωz", lw=2)
             plot!(p3, times, ω_mag_hist, label="|ω|", lw=2, linestyle=:dash, color=:black)
 
-            p4 = plot(times, H_mag_hist, label="", lw=2, ylim=(0, 1.1 * maximum(H_mag_hist)), xlabel="Time [s]", ylabel="|H| [kg·m²/s]", title="Angular Momentum Magnitude", color=:black)
+            p4 = plot(times, H_mag_hist, label="", lw=2, ylim=(0, 1.1 * maximum(H_mag_hist)), xlabel="", ylabel="|H| [kg·m²/s]", title="Angular Momentum Magnitude", color=:black)
 
-            combined = plot(p1, p2, p3, p4, layout=(4,1), size=(800, 1000))
+            p5 = plot(times, q_mag_hist, label="", lw=2, ylim=(0.999, 1.001), xlabel="Time [s]", ylabel="|q|", title="Quaternion Magnitude", color=:red)
+
+            combined = plot(p1, p2, p3, p4, p5, layout=(5,1), size=(800, 1200))
             savefig(combined, "plots/attitude_dynamics.png")
             println("✓ Attitude dynamics plot saved to test/plots/attitude_dynamics.png")
         catch e
