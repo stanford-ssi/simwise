@@ -5,8 +5,7 @@ using SatelliteDynamics
 using SatelliteToolbox
 
 # Exports
-export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth
-
+export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth, state_from_oe, orbital_elements_to_eci
 # Constants
 include("constants.jl")
 
