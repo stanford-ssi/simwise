@@ -75,6 +75,32 @@ function ned_to_eci(B_ned::Vector{Float64}, λ::Float64, Ω::Float64, gmst::Floa
 end
 
 """
+    eci_to_ecef(r_eci, gmst)
+
+Transform vector from ECI to ECEF frame.
+
+# Arguments
+- `r_eci::Vector{Float64}`: Vector in ECI frame
+- `gmst::Float64`: Greenwich Mean Sidereal Time [rad]
+
+# Returns
+- `Vector{Float64}`: Vector in ECEF frame
+"""
+function eci_to_ecef(r_eci::Vector{Float64}, gmst::Float64)
+    # Rotation from ECI to ECEF (about Z-axis by -GMST angle)
+    sin_gmst = sin(-gmst)
+    cos_gmst = cos(-gmst)
+
+    r_ecef = [
+        cos_gmst * r_eci[1] - sin_gmst * r_eci[2],
+        sin_gmst * r_eci[1] + cos_gmst * r_eci[2],
+        r_eci[3]
+    ]
+
+    return r_ecef
+end
+
+"""
     quat_to_dcm(q)
 
 Convert quaternion to direction cosine matrix (DCM).
