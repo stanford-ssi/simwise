@@ -1,5 +1,20 @@
 using LinearAlgebra
 using SatelliteDynamics
+using Test
+
+function sun_vector_eci(jd::Float64)::Vector{Float64}
+    # Use the SatelliteDynamics package to get the sun's position in ECI coordinates
+    # The package's sun_position function is already accurate and validated
+    
+    # Convert Julian date to epoch
+    epc = Epoch(SatelliteDynamics.jd_to_caldate(jd)...)
+    
+    # Get sun position in ECI coordinates (returns position in meters)
+    sun_pos = sun_position(epc)
+    
+    # Normalize to get unit vector
+    return sun_pos ./ norm(sun_pos)
+end
 
 @testset "Sun Vector Tests" begin
     @testset "Comparison with SatelliteDynamics" begin

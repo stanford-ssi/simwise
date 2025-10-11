@@ -47,6 +47,7 @@ n_steps = 6000
 final_state = propagate(state0, dt, n_steps, params)
 ```
 """
+
 function propagate(state::State, dt::Float64, n_steps::Int, params::Parameters)
     """
     coupled_dynamics(s, p)
