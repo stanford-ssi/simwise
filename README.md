@@ -64,6 +64,21 @@ cd test
 julia runtests.jl
 ```
 
+### Testing GitHub Actions Locally
+
+Test GitHub Actions workflows locally before pushing using [act](https://nektosact.com/):
+
+```bash
+# Install act (macOS)
+brew install act
+
+# Run workflows locally
+act push --container-architecture linux/amd64
+
+# Reuse container for faster subsequent runs
+act push --container-architecture linux/amd64 --reuse
+```
+
 ## Structure
 
 ```

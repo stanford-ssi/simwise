@@ -21,9 +21,17 @@ jobs:
         with:
           version: '1.10'  # Adjust to your Julia version
 
+      - name: Cache Julia packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.julia
+          key: ${{ runner.os }}-julia-${{ hashFiles('**/test.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-julia-
+
       - name: Install dependencies
         run: |
-          julia --project=. -e 'import Pkg; Pkg.instantiate(); Pkg.resolve(); Pkg.status()'
+          julia -e 'import Pkg; Pkg.add(["SatelliteDynamics", "SatelliteToolbox", "SatelliteToolboxTransformations", "SatelliteToolboxGeomagneticField", "Plots"])'
 
       - name: Run tests
-        run: julia --project=. test/runtests.jl
+        run: julia test/runtests.jl
