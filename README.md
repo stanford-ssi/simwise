@@ -18,6 +18,8 @@ Install dependencies:
 
 ```bash
 julia --project=. -e 'import Pkg; Pkg.instantiate()'
+
+julia -e 'import Pkg; Pkg.add(["SatelliteDynamics", "SatelliteToolbox", "SatelliteToolboxTransformations", "SatelliteToolboxGeomagneticField", "Plots"])'
 ```
 
 ### Adding New Dependencies
@@ -26,6 +28,11 @@ To add a new package to the project:
 
 ```bash
 julia --project=. -e 'import Pkg; Pkg.add("PackageName")'
+```
+
+And add to this list in .github/workflows/test.yml, line 34
+```yml 
+julia -e 'import Pkg; Pkg.add(["SatelliteDynamics", "SatelliteToolbox", "SatelliteToolboxTransformations", "SatelliteToolboxGeomagneticField", "Plots"])'
 ```
 
 This will automatically:
