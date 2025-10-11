@@ -17,8 +17,23 @@ See PLAN.md for design planning notes.
 Install dependencies:
 
 ```bash
-julia -e 'import Pkg; Pkg.instantiate()'
+julia --project=. -e 'import Pkg; Pkg.instantiate()'
 ```
+
+### Adding New Dependencies
+
+To add a new package to the project:
+
+```bash
+julia --project=. -e 'import Pkg; Pkg.add("PackageName")'
+```
+
+This will automatically:
+1. Add the package to `Project.toml` with the correct UUID
+2. Update `Manifest.toml` with all transitive dependencies
+3. Download and precompile the package
+
+**Important**: Any package you import with `using` or `import` must be listed in `Project.toml` as a direct dependency, even if it's already present as a transitive dependency in `Manifest.toml`.
 
 ## Quick Start
 

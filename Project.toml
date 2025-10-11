@@ -2,3 +2,4 @@
 SatelliteDynamics = "0e7c1a32-1b9f-5532-88a4-e668712d6a4c"
 SatelliteToolbox = "6ac157d9-b43d-51bb-8fab-48bf53814f4a"
 SatelliteToolboxGeomagneticField = "9fc549ba-b5d7-49a2-b268-8171e5fb6e89"
+SatelliteToolboxTransformations = "6b019ec1-7a1e-4f04-96c7-a9db1ca5514d"
