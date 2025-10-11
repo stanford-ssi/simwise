@@ -12,6 +12,14 @@ See PLAN.md for design planning notes.
 - **Serial Interface**: Real-time communication with flight computers
 - **Flexible Integrators**: RK4, RK45, and more via DifferentialEquations.jl
 
+## Setup
+
+Install dependencies:
+
+```bash
+julia -e 'import Pkg; Pkg.instantiate()'
+```
+
 ## Quick Start
 
 ```julia

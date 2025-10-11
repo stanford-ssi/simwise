@@ -1,0 +1,15 @@
+name = "Simwise"
+uuid = "00000000-0000-0000-0000-000000000000"
+authors = ["Stanford SSI"]
+version = "0.1.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+SatelliteDynamics = "0e7c1a32-1b9f-5532-88a4-e668712d6a4c"
+SatelliteToolbox = "6ac157d9-b43d-51bb-8fab-48bf53814f4a"
+SatelliteToolboxGeomagneticField = "4a88b013-534f-4269-aa10-b1b8d5c9e5e9"
+SatelliteToolboxTransformations = "9b4f0c8d-f8f4-4546-b975-8e28ed35e311"
+
+[compat]
+julia = "1.10"

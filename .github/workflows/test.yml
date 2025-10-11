@@ -21,5 +21,8 @@ jobs:
         with:
           version: '1.10'  # Adjust to your Julia version
 
+      - name: Install dependencies
+        run: julia -e 'import Pkg; Pkg.instantiate()'
+
       - name: Run tests
         run: julia test/runtests.jl
