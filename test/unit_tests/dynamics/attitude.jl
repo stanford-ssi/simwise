@@ -33,7 +33,7 @@ using Simwise.Dynamics: attitude_dynamics
         # For q = [1, 0, 0, 0] and ω = [0, 0, 0.1]:
         # q_dot = 0.5 * [0, 0, 0, 0.1]
         expected_q_dot = [0.0, 0.0, 0.0, 0.05]
-        @test isapprox([q_dot.q0, q_dot.q1, q_dot.q2, q_dot.q3], expected_q_dot, atol=1e-12)
+        @test isapprox([q_dot.w, q_dot.x, q_dot.y, q_dot.z], expected_q_dot, atol=1e-12)
     end
 
     @testset "Asymmetric Body (Gyroscopic Effect)" begin
@@ -116,10 +116,10 @@ using Simwise.Dynamics: attitude_dynamics
         for i in 1:n_steps
             t = (i-1) * dt
             push!(times, t)
-            push!(q0_hist, state.q.q0)
-            push!(q1_hist, state.q.q1)
-            push!(q2_hist, state.q.q2)
-            push!(q3_hist, state.q.q3)
+            push!(q0_hist, state.q.w)
+            push!(q1_hist, state.q.x)
+            push!(q2_hist, state.q.y)
+            push!(q3_hist, state.q.z)
             push!(ωx_hist, state.ω[1])
             push!(ωy_hist, state.ω[2])
             push!(ωz_hist, state.ω[3])

@@ -14,3 +14,6 @@ const G = 6.67430e-11           # m^3/(kg·s^2) - Gravitational constant
 const seconds_per_day = 86400.0
 const mjd_2000 = SatelliteDynamics.MJD2000
 const mjd_0 = SatelliteDynamics.MJD_ZERO
+
+const DEG_TO_RAD = pi / 180.0
+const RAD_TO_DEG = 1.0 / DEG_TO_RAD

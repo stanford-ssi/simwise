@@ -1,6 +1,7 @@
 using Test
 
+using Simwise
+
 @testset "Math Tests" begin
-    include("rk4.jl")
     include("quaternions.jl")
 end

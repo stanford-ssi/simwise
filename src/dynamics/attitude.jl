@@ -39,10 +39,10 @@ function attitude_dynamics(state::State, torques::Vector{Float64}, inertia::Matr
 
     # Return as Quat (does NOT auto-normalize - safe for derivatives!)
     q_dot = Quat(
-        0.5 * (-ωx * q.q1 - ωy * q.q2 - ωz * q.q3),  # q0_dot
-        0.5 * ( ωx * q.q0 + ωz * q.q2 - ωy * q.q3),  # q1_dot
-        0.5 * ( ωy * q.q0 - ωz * q.q1 + ωx * q.q3),  # q2_dot
-        0.5 * ( ωz * q.q0 + ωy * q.q1 - ωx * q.q2)   # q3_dot
+        0.5 * (-ωx * q.x - ωy * q.y - ωz * q.z),  # q0_dot
+        0.5 * ( ωx * q.w + ωz * q.y - ωy * q.z),  # q1_dot
+        0.5 * ( ωy * q.w - ωz * q.x + ωx * q.z),  # q2_dot
+        0.5 * ( ωz * q.w + ωy * q.x - ωx * q.y)   # q3_dot
     )
 
     # Euler's rotation equation: I * ω_dot = τ - ω × (I * ω)
