@@ -20,11 +20,11 @@ Install dependencies:
 julia --project=. -e 'import Pkg; Pkg.instantiate()'
 ```
 
-This will install all dependencies from `Project.toml` and `Manifest.toml`.
+This will install all dependencies from `Project.toml` into a `Manifest.toml` file.
 
 ### Adding New Dependencies
 
-**For runtime dependencies** (code that runs in production):
+**For uninstalled dependencies** (code that runs in production):
 
 ```bash
 julia --project=. -e 'import Pkg; Pkg.add("PackageName")'
@@ -66,7 +66,7 @@ run_hil_simulation(duration=3600.0, dt=0.01)
 ```
 
 ## Running Tests
-
+In the root `simwise` directory:
 ```bash
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
@@ -86,7 +86,7 @@ act push --container-architecture linux/amd64
 act push --container-architecture linux/amd64 --reuse
 ```
 
-## Structure
+## Structure (outdated)
 
 ```
 src/
