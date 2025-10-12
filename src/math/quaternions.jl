@@ -3,6 +3,8 @@
 
 using LinearAlgebra
 
+using Simwise: RAD_TO_DEG, DEG_TO_RAD
+
 """
     Quat
 
@@ -77,7 +79,7 @@ Quaternion inverse (for unit quaternions, this is the conjugate).
 """
 function quat_inv(q::Quat)
     norm_sq = q.w^2 + q.x^2 + q.y^2 + q.z^2
-    return Quat(q.w/norm_sq, q.x/norm_sq, q.y/norm_sq, q.z/norm_sq)
+    return Quat(q.w/norm_sq, -q.x/norm_sq, -q.y/norm_sq, -q.z/norm_sq)
 end
 
 ###########################################################################
@@ -149,6 +151,67 @@ end
 #           Arithmetic Overloading
 ###########################################################################
 
+function angle_axis_to_q(angle::Float64, axis::Vector, degrees::Bool = false)
+    """Turn angle-axis rotation into quaternion.
+    The `degrees` argument specified whether the angle is in degrees.
+    Defaults to false
+    """
+
+    if degrees
+        angle = angle * DEG_TO_RAD
+    end
+    
+
+    unit_axis = axis / norm(axis)
+
+    w = cos(angle/2)
+    x,y,z = sin(angle / 2) * unit_axis
+
+    return Quat(w,x,y,z)
+end
+
+function angle_axis_to_q(angle::Float32, axis::Vector)
+    return angle_axis_to_q(angle, axis, false)
+end
+
+function q_to_axis_angle(q::Quat, degrees::Bool = false)
+    """Turn quaternion rotation into angle-axis.
+    The `degrees` argument specified whether the angle is in degrees.
+    Defaults to false.
+
+    If angle is zero, returns 0 angle and [0,0,0]
+    """
+
+    
+    
+
+    # unit_axis = axis / norm(axis)
+
+    # w = cos(angle/2)
+    # x,y,z = sin(angle / 2) * unit_axis
+
+    angle = 2*acos(q.w)
+
+    # Shouldn't realistically encounter this
+    if angle < 1e-10
+        return 0, [0,0,0]
+    end
+
+    i = q.x/sin(angle/2)
+    j = q.y/sin(angle/2)
+    k = q.z/sin(angle/2)
+
+    if degrees
+        angle = angle * RAD_TO_DEG
+    end
+
+    return angle, [i,j,k]
+end
+
+###########################################################################
+#           Arithmetic Overloading
+###########################################################################
+
 # Operator overloading for quaternion multiplication
 import Base: *
 *(q1::Quat, q2::Quat) = quat_mult(q1, q2)
@@ -163,10 +226,10 @@ Component-wise quaternion addition (for RK4 derivatives).
 Note: This is NOT a standard quaternion operation, but needed for RK4.
 """
 function +(q1::Quat, q2::Quat)
-    return Quat(q1.q0 + q2.q0, q1.q1 + q2.q1, q1.q2 + q2.q2, q1.q3 + q2.q3)
+    return Quat(q1.w + q2.w, q1.x + q2.x, q1.y + q2.y, q1.z + q2.z)
 end
 
-Base.:(==)(q1::Quat, q2::Quat) = q1.w == q2.w && q1.x == q2.x && q1.y == q2.y && q1.z == q2.z
+Base.:(==)(q1::Quat, q2::Quat) = isapprox(q1.w,q2.w, atol=1e-12) && isapprox(q1.x,q2.x, atol=1e-12) && isapprox(q1.y,q2.y, atol=1e-12) && isapprox(q1.z,q2.z, atol=1e-12)
 
 
 """
@@ -175,7 +238,7 @@ Base.:(==)(q1::Quat, q2::Quat) = q1.w == q2.w && q1.x == q2.x && q1.y == q2.y &&
 Scalar multiplication of quaternion (for RK4 derivatives).
 """
 function *(a::Real, q::Quat)
-    return Quat(a * q.q0, a * q.q1, a * q.q2, a * q.q3)
+    return Quat(a * q.w, a * q.x, a * q.y, a * q.z)
 end
 
 # Also support q * a

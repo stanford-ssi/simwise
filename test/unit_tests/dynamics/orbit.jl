@@ -43,7 +43,7 @@ using Simwise.Dynamics: propagate_keplerian, state_from_oe
             push!(v_eci_history, copy(state.v_eci))
 
             oe_new = propagate_keplerian(state, dt)
-            state = state_from_oe([state.q.q0, state.q.q1, state.q.q2, state.q.q3], state.ω, state.t + dt/86400.0, oe_new)
+            state = state_from_oe([state.q.w, state.q.x, state.q.y, state.q.z], state.ω, state.t + dt/86400.0, oe_new)
         end
 
         # Record final state after all propagations
@@ -153,7 +153,7 @@ using Simwise.Dynamics: propagate_keplerian, state_from_oe
             push!(v_eci_history, copy(state.v_eci))
 
             oe_new = propagate_keplerian(state, dt)
-            state = state_from_oe([state.q.q0, state.q.q1, state.q.q2, state.q.q3], state.ω, state.t + dt/86400.0, oe_new)
+            state = state_from_oe([state.q.w, state.q.x, state.q.y, state.q.z], state.ω, state.t + dt/86400.0, oe_new)
         end
 
         # Record final state after all propagations
@@ -255,7 +255,7 @@ using Simwise.Dynamics: propagate_keplerian, state_from_oe
 
         for i in 1:n_steps
             oe_new = propagate_keplerian(state, dt)
-            state = state_from_oe([state.q.q0, state.q.q1, state.q.q2, state.q.q3], state.ω, state.t + dt/86400.0, oe_new)
+            state = state_from_oe([state.q.w, state.q.x, state.q.y, state.q.z], state.ω, state.t + dt/86400.0, oe_new)
         end
 
         elapsed_time = n_steps * dt
