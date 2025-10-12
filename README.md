@@ -67,8 +67,7 @@ run_hil_simulation(duration=3600.0, dt=0.01)
 ## Running Tests
 
 ```bash
-cd test
-julia runtests.jl
+julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
 ### Testing GitHub Actions Locally
