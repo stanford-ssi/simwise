@@ -2,6 +2,8 @@
 
 using LinearAlgebra
 
+using ..Satellite: State, Parameters
+
 """
     propagate_keplerian(state, dt)
 

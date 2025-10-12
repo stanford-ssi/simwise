@@ -2,6 +2,8 @@
 
 using LinearAlgebra
 
+using ..Satellite: State, Parameters
+
 """
     gravity_gradient_torque(state, params)
 

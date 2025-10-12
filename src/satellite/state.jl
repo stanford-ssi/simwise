@@ -1,5 +1,7 @@
 # State vector definition
 
+using ..Math: Quat
+
 """
     State
 

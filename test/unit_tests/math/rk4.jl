@@ -1,12 +1,16 @@
 using Plots
 
+using Simwise.Satellite: State, Parameters
+using Simwise.Dynamics: state_from_oe
+using Simwise.Math: rk4_step, Quat
+
 @testset "Propagator Tests" begin
     @testset "RK4 Integration" begin
         # Test with simple exponential: dx/dt = -k*x (solution: x(t) = x0*exp(-k*t))
         # Using a simple State with just one element varying
 
         # Simple derivative function: exponential decay in first orbital element
-        function simple_dynamics(state::State, params)
+        function simple_dynamics(t::Float64, state::State, params)
             k = 0.1  # decay constant
             dq = Quat(0.0, 0.0, 0.0, 0.0)
             dω = zeros(3)
@@ -43,7 +47,7 @@ using Plots
             push!(numerical, state.orbital_elements[1])
             push!(analytical, oe0[1] * exp(-k * t))
 
-            state = rk4_step(simple_dynamics, state, dt, params)
+            state = rk4_step(dt, t, state, simple_dynamics, params)
         end
 
         # Test accuracy at final time (relaxed tolerance for multi-step)
@@ -52,7 +56,7 @@ using Plots
         @test isapprox(final_numerical, final_analytical, rtol=1e-5)
 
         # Test single step accuracy
-        state1 = rk4_step(simple_dynamics, state0, dt, params)
+        state1 = rk4_step(dt, 0.0, state0, simple_dynamics, params)
         a_expected = oe0[1] * exp(-k * dt)
         @test isapprox(state1.orbital_elements[1], a_expected, rtol=1e-6)
         @test isapprox(state1.t, t0 + dt/86400.0, rtol=1e-10)
@@ -72,7 +76,7 @@ using Plots
         # Test with oscillatory function: dx/dt = A*omega*cos(omega*t)
         # Solution: x(t) = x0 + A*sin(omega*t)
 
-        function oscillatory_dynamics(state::State, params)
+        function oscillatory_dynamics(t::Float64, state::State, params)
             A = 1000e3  # amplitude [m]
             omega = 0.1  # angular frequency [rad/s]
 
@@ -116,7 +120,7 @@ using Plots
             push!(numerical, state.orbital_elements[1])
             push!(analytical, a0 + A * sin(omega * t))
 
-            state = rk4_step(oscillatory_dynamics, state, dt, params)
+            state = rk4_step(dt, t, state, oscillatory_dynamics, params)
         end
 
         # Test accuracy at final time

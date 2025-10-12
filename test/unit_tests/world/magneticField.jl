@@ -1,6 +1,10 @@
 using Plots
 using LinearAlgebra
 
+
+using Simwise.Math: jd_to_gmst, eci_to_ecef
+using Simwise.World: magnetic_field_eci
+
 @testset "Magnetic Field Tests" begin
     @testset "Magnetic Field ECEF Heatmap" begin
         # Test magnetic field computation and visualization
@@ -19,8 +23,8 @@ using LinearAlgebra
         # Create a grid in latitude and longitude
         n_lat = 500
         n_lon = 1000
-        lats = range(-π/2, π/2, length=n_lat)  # -90° to +90°
-        lons = range(-π, π, length=n_lon)      # -180° to +180°
+        lats = range(-π/2 + 0.01, π/2 - 0.01, length=n_lat)  # -90° to +90°
+        lons = range(-π + 0.01, π - 0.01, length=n_lon)      # -180° to +180°
 
         # Initialize arrays for magnetic field components (ECEF)
         B_x = zeros(n_lat, n_lon)

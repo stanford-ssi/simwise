@@ -18,25 +18,26 @@ Install dependencies:
 
 ```bash
 julia --project=. -e 'import Pkg; Pkg.instantiate()'
-
-julia -e 'import Pkg; Pkg.add(["SatelliteDynamics", "SatelliteToolbox", "SatelliteToolboxTransformations", "SatelliteToolboxGeomagneticField", "Plots"])'
 ```
+
+This will install all dependencies from `Project.toml` into a `Manifest.toml` file.
 
 ### Adding New Dependencies
 
-To add a new package to the project:
+**For uninstalled dependencies** (code that runs in production):
 
 ```bash
 julia --project=. -e 'import Pkg; Pkg.add("PackageName")'
 ```
 
-And add to this list in .github/workflows/test.yml, line 34
-```yml 
-julia -e 'import Pkg; Pkg.add(["SatelliteDynamics", "SatelliteToolbox", "SatelliteToolboxTransformations", "SatelliteToolboxGeomagneticField", "Plots"])'
+**For test-only dependencies** (packages only used in tests):
+
+```bash
+julia --project=. -e 'import Pkg; Pkg.add("PackageName"; target="test")'
 ```
 
 This will automatically:
-1. Add the package to `Project.toml` with the correct UUID
+1. Add the package to `Project.toml` (in `[deps]` or `[extras]` depending on target)
 2. Update `Manifest.toml` with all transitive dependencies
 3. Download and precompile the package
 
@@ -65,10 +66,9 @@ run_hil_simulation(duration=3600.0, dt=0.01)
 ```
 
 ## Running Tests
-
+In the root `simwise` directory:
 ```bash
-cd test
-julia runtests.jl
+julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
 ### Testing GitHub Actions Locally
@@ -86,7 +86,7 @@ act push --container-architecture linux/amd64
 act push --container-architecture linux/amd64 --reuse
 ```
 
-## Structure
+## Structure (outdated)
 
 ```
 src/
