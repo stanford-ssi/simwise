@@ -1,8 +1,10 @@
 using Plots
 using LinearAlgebra
 
-using Simwise.Math: Quat
+using Simwise.Satellite: State, Parameters
+using Simwise.Math: Quat, rk4_step
 using Simwise.Dynamics: attitude_dynamics
+
 @testset "Attitude Dynamics Tests" begin
     @testset "Torque-Free Rigid Body" begin
         # Test torque-free rigid body motion (conservation of angular momentum)
