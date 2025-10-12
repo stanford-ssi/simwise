@@ -2,6 +2,8 @@
 
 # using GLMakie  # or CairoMakie for static plots
 
+using ..Satellite: State
+
 """
     plot_attitude(trajectory)
 

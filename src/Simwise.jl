@@ -6,40 +6,29 @@ using SatelliteToolbox
 using SatelliteToolboxTransformations
 using SatelliteToolboxGeomagneticField
 
-# Exports
-export State, Parameters, Quat, rk4_step, propagate, propagate_keplerian, attitude_dynamics, normalize_quaternion!, μ_earth, state_from_oe, orbital_elements_to_eci, magnetic_field_eci, eci_to_geocentric, ned_to_eci, jd_to_gmst, eci_to_ecef, sun_vector_eci
+# Optional in case we don't want it I guess
+# __precompile__(false)
 
 # Constants
 include("constants.jl")
 
-# Math pure utilities (pure functions, no type dependencies)
-include("math/quaternions.jl")
-include("math/transforms.jl")
-include("math/time.jl")
+include(joinpath(@__DIR__, "math", "module.jl"))
+export Quat, quat_apply, quat_conj, quat_inv, quat_mult
 
-# Core types
-include("satellite/state.jl")
-include("satellite/parameters.jl")
+include(joinpath(@__DIR__, "satellite", "module.jl"))
+export Parameters, State
 
-# Integrators (need State, Parameters)
-include("math/integrators.jl")
+include(joinpath(@__DIR__, "dynamics", "module.jl"))
 
-# Dynamics
-include("dynamics/attitude.jl")
-include("dynamics/orbit.jl")
-include("dynamics/torques/drag.jl")
-include("dynamics/torques/gravityGradient.jl")
+include(joinpath(@__DIR__, "simulation", "module.jl"))
+export propagate
 
-# World models
-include("world/atmosphere.jl")
-include("world/magneticField.jl")
-include("world/sunVector.jl")
+include(joinpath(@__DIR__, "visualization", "module.jl"))
 
-# Visualization
-include("visualization/orbitViz.jl")
-include("visualization/attitudeViz.jl")
+include(joinpath(@__DIR__, "world", "module.jl"))
+export magnetic_field_eci, sun_vector_eci
 
-# Simulator
-include("simulator.jl")
+# Exports
+# export μ_earth
 
 end # module Simwise

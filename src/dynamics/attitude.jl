@@ -2,6 +2,8 @@
 
 using LinearAlgebra
 
+using ..Satellite: State, Parameters
+
 """
     attitude_dynamics(state, torques, inertia)
 
