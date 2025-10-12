@@ -1,3 +1,5 @@
 *.png
 *.csv
 .DS_Store
+
+Manifest.toml

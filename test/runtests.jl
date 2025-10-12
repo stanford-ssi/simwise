@@ -1,5 +1,7 @@
 using Test
 
+using Simwise
+
 @testset "Simwise Tests" begin
     include("rk4.jl")
     include("orbit.jl")
