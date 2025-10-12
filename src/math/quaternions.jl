@@ -136,15 +136,29 @@ function quat_mult(q1::Quat, q2::Quat)
     return Quat(s_result, v_result[1], v_result[2], v_result[3])
 end
 
-function quat_apply(q::Quat, v::Vector)::Vector
-    # Extract scalar and vector parts
+"""Equivalent to expressing the SAME vector in a DIFFERENT coordinate frame
 
-    pushfirst!(v, 0)
-    q_inv = quat_inv(q_inv)
-    
-    result = quat_mult(quat_mult(q_inv, v), q)
+Types of rotations specified by the boolean argument `passive`:
+- "passive" (true) - Rotates the coordinate frame, and produces the vector representation in that new frame
+- "active" (false) - Rotates a vector V around a FIXED axis to product V'
+Defaults to "passive".
 
-    return result[2:4]
+For active rotation, returns the new vector. For passive rotation, the vector expressed in the new coordinate system.
+"""
+function quat_apply(q::Quat, v::Vector{Float64}, passive::Bool = true)
+
+    normalize!(q)
+
+    # If passive rotation, the order of q and q* are reversed
+    if passive
+        # Passive: v' = q * v * q*
+        result = quat_mult(quat_mult(quat_conj(q), Quat(0, v[1], v[2], v[3])), q)
+    else
+        # Active: v' = q* * v * q
+        result = quat_mult(quat_mult(q, Quat(0, v[1], v[2], v[3])), quat_conj(q))
+    end
+
+    return Float64[result.x, result.y, result.z]
 end
 
 ###########################################################################
@@ -160,7 +174,6 @@ function angle_axis_to_q(angle::Float64, axis::Vector, degrees::Bool = false)
     if degrees
         angle = angle * DEG_TO_RAD
     end
-    
 
     unit_axis = axis / norm(axis)
 
@@ -170,10 +183,6 @@ function angle_axis_to_q(angle::Float64, axis::Vector, degrees::Bool = false)
     return Quat(w,x,y,z)
 end
 
-function angle_axis_to_q(angle::Float32, axis::Vector)
-    return angle_axis_to_q(angle, axis, false)
-end
-
 function q_to_axis_angle(q::Quat, degrees::Bool = false)
     """Turn quaternion rotation into angle-axis.
     The `degrees` argument specified whether the angle is in degrees.
@@ -181,15 +190,6 @@ function q_to_axis_angle(q::Quat, degrees::Bool = false)
 
     If angle is zero, returns 0 angle and [0,0,0]
     """
-
-    
-    
-
-    # unit_axis = axis / norm(axis)
-
-    # w = cos(angle/2)
-    # x,y,z = sin(angle / 2) * unit_axis
-
     angle = 2*acos(q.w)
 
     # Shouldn't realistically encounter this

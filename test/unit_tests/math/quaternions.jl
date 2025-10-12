@@ -140,7 +140,71 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
 
     end
     @testset "Apply" begin
-        # TEST APPLY THEN WE ARE DONE HOPEFULLY
+
+        @testset "Z axis 45 deg around X axis - Active" begin
+            """
+            Starts with quaternion representing a 90deg rotation around the x axis.
+            The matrix expresses the vector in coordiante system A (`V_a`= `[0,0,1]`) 
+            as the same vector from a rotated coordinate system B (`V_b` = `[0,1,0]`)
+            """
+            q = angle_axis_to_q(90.0, [1,0,0], true)
+            v = Float64[0,0,1]
+            v_result = quat_apply(q, v, false)
+            @test isapprox(v_result, [0, -1, 0])
+        end
+
+        @testset "Z axis from frame rotated 90 deg around X axis - passive" begin
+            """
+            Starts with quaternion representing a 90deg rotation around the x axis.
+            The matrix rotates the vector `V` `[0,0,1]` to produce `V'` `[0,1,0]`
+            """
+            q = angle_axis_to_q(90.0, [1,0,0], true)
+            v = Float64[0,0,1]
+            v_result = quat_apply(q, v)
+            @test isapprox(v_result, [0, 1, 0])
+        end
+
+        @testset "Z axis 1e-6 deg around X axis - Active" begin
+            """
+            Starts with quaternion representing a 90deg rotation around the x axis.
+            The matrix expresses the vector in coordiante system A (`V_a`= `[0,0,1]`) 
+            as the same vector from a rotated coordinate system B (`V_b` = `[0,1,0]`)
+            """
+            q = angle_axis_to_q(1e-6, [1,0,0], true)
+            v = Float64[0,0,1]
+            v_result = quat_apply(q, v, false)
+            @test isapprox(v_result, [0, -sin(1e-6 * DEG_TO_RAD), cos(1e-6 * DEG_TO_RAD)])
+        end
+
+        @testset "Z axis from frame rotated 1e-6 deg around X axis - passive" begin
+            """
+            Starts with quaternion representing a 90deg rotation around the x axis.
+            The matrix rotates the vector `V` `[0,0,1]` to produce `V'` `[0,1,0]`
+            """
+            q = angle_axis_to_q(1e-6, [1,0,0], true)
+            v = Float64[0,0,1]
+            v_result = quat_apply(q, v)
+            @test isapprox(v_result, [0, sin(1e-6 * DEG_TO_RAD), cos(1e-6 * DEG_TO_RAD)])
+        end
+
+        @testset "Weird rotations" begin
+            """
+            Starts with quaternion representing a 90deg rotation around the x axis.
+            The matrix rotates the vector `V` `[0,0,1]` to produce `V'` `[0,1,0]`
+            """
+            q = angle_axis_to_q(90.0, [0,0,1], true)
+            v = Float64[1,1,1]
+            v_result = quat_apply(q, v)
+            @test isapprox(v_result, [1, -1, 1])
+
+            # From https://www.vcalc.com/wiki/vector-rotation
+            q = angle_axis_to_q(13.0, [2,13,5.6], true)
+            v = Float64[1,2,7]
+            v_result = quat_apply(q, v, false)
+            @test isapprox(v_result, [2.2469464036,1.9261221082,6.7261642474])
+        end
+
+
     end
 
 end
