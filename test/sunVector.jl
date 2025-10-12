@@ -1,6 +1,8 @@
 using LinearAlgebra
 using SatelliteDynamics
 
+using Simwise.World: sun_vector_eci
+
 @testset "Sun Vector Tests" begin
     @testset "Comparison with SatelliteDynamics" begin
         # Test against SatelliteDynamics.sun_position at various dates

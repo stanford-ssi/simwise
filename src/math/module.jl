@@ -11,8 +11,10 @@ include("quaternions.jl")
 export Quat, quat_apply, quat_conj, quat_inv, quat_mult
 
 include("time.jl")
+export jd_to_gmst
+
 include("transforms.jl")
-export eci_to_ecef
+export eci_to_ecef, ned_to_eci
 
 
 end

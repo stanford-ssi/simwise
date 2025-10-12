@@ -2,6 +2,8 @@ module Dynamics
 
 using LinearAlgebra
 
+include("../constants.jl")
+
 # Call every non-exported name with Simwise.Dynamics.[function]
 
 include("torques/drag.jl")

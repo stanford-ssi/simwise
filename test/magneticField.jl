@@ -1,6 +1,10 @@
 using Plots
 using LinearAlgebra
 
+
+using Simwise.Math: jd_to_gmst, eci_to_ecef
+using Simwise.World: magnetic_field_eci
+
 @testset "Magnetic Field Tests" begin
     @testset "Magnetic Field ECEF Heatmap" begin
         # Test magnetic field computation and visualization

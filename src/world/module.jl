@@ -1,6 +1,5 @@
 module World
 
-using ..Simwise  # parent module, for shared constants etc.
 using LinearAlgebra
 
 # Call every non-exported name with Simwise.World.[function]

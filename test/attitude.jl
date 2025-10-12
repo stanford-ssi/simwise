@@ -1,6 +1,8 @@
 using Plots
 using LinearAlgebra
 
+using Simwise.Math: Quat
+using Simwise.Dynamics: attitude_dynamics
 @testset "Attitude Dynamics Tests" begin
     @testset "Torque-Free Rigid Body" begin
         # Test torque-free rigid body motion (conservation of angular momentum)
@@ -90,7 +92,7 @@ using LinearAlgebra
         ω_mag_hist = Float64[]
 
         # Dynamics function for RK4
-        function attitude_only_dynamics(state::State, params)
+        function attitude_only_dynamics(t::Float64, state::State, params)
             torques = zeros(3)  # No external torques
             q_dot, ω_dot = attitude_dynamics(state, torques, I)
 
@@ -121,7 +123,7 @@ using LinearAlgebra
             push!(ωz_hist, state.ω[3])
             push!(ω_mag_hist, norm(state.ω))
 
-            state = rk4_step(attitude_only_dynamics, state, dt, params)
+            state = rk4_step(dt, t, state, attitude_only_dynamics, params)
         end
 
         # Check quaternion norm stays at 1 (should be preserved with normalization)
