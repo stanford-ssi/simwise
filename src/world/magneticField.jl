@@ -4,7 +4,7 @@ using SatelliteToolboxGeomagneticField
 using SatelliteToolboxTransformations
 using Dates
 
-using Simwise.Math: eci_to_ecef, ned_to_eci
+using Simwise.Math: eci_to_ecef, ned_to_eci, ecef_to_geocentric, jd_to_gmst
 """
     magnetic_field_eci(r_eci, jd)
 
@@ -24,8 +24,8 @@ function magnetic_field_eci(r_eci::Vector{Float64}, jd::Float64)
 
     # Convert ECEF position to geocentric coordinates
     r, λ, Ω = ecef_to_geocentric(r_ecef)
-    # λ = clamp(λ, -pi/2, pi/2)
-    # Ω = clamp(Ω, -pi, pi)
+    λ = clamp(λ, -pi/2, pi/2)
+    Ω = clamp(Ω, -pi, pi)
 
     # Convert Julian date to Year A.D. for IGRF
     # JD 2451545.0 = January 1, 2000, 12:00 TT
