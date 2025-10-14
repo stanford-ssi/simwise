@@ -215,8 +215,11 @@ end
 """
     https://motoq.github.io/doc/tnotes/dcm
 """
-function dcm_to_q(dcm::Matrix{Float64})
-    trace = dcm
+function dcm_to_q(dcm::Matrix{Float64})::Quat
+    # TODO: MAKE THIS WORK FOR NON-NORMALIZED MATRICES
+    # # Yeah I did vibe code these 2 lines
+    # U, _, Vt = svd(dcm)
+    # dcm = U * Vt
 
     c11, c12, c13 = dcm[1,:]
     c21, c22, c23 = dcm[2,:]
@@ -247,6 +250,18 @@ function dcm_to_q(dcm::Matrix{Float64})
     end
 
     return Quat(w,x,y,z)
+end
+
+function q_to_dcm(q::Quat)::Matrix{Float64}
+    # In the PDF, it is notated as s,i,j,k, not w,x,y,z
+    normalize!(q)
+    s, i, j, k = q.w, q.x, q.y, q.z
+
+    return [
+        1 - 2(j^2 + k^2)   2(i*j + s*k)   2(i*k - s*j);
+        2(i*j - s*k)       1 - 2(i^2 + k^2) 2(j*k + s*i);
+        2(i*k + s*j)       2(j*k - s*i)   1 - 2(i^2 + j^2)
+    ]
 end
 
 

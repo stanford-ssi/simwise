@@ -1,6 +1,6 @@
 using Test
 
-using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!, dcm_to_q
+using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!, dcm_to_q, q_to_dcm
 using Simwise: RAD_TO_DEG, DEG_TO_RAD
 @testset "Quaternion Tests" begin
     
@@ -153,27 +153,39 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
             @test q == Quat(1,0,0,0)
         end
 
+        # TODO: MAKE THIS WORK FOR NON-NORMALIZED MATRICES
+        # @testset "Non Normalized" begin
+        #     dcm = inv([
+        #         0.0008382 -0.1452129  0.9894001;
+        #         0.2022121  0.9689857  0.1420454;
+        #         -0.9793414  0.1999496  0.0301760
+        #     ]) * 10
+
+        #     @test isapprox(to_vector(dcm_to_q(dcm)), to_vector(Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333)), atol=1e-6)
+
+        # end
+
         @testset "180 Degree Axes rotations" begin
-            x_dcm = inv([
+            dcm_x = inv([
                 1.0 0.0 0.0;
                 0.0 -1.0 0.0;
                 0.0 0.0 -1.0
                 ])
-            @test dcm_to_q(x_dcm) == Quat(0,1,0,0)
+            @test dcm_to_q(dcm_x) == Quat(0,1,0,0)
 
-            y_dcm = inv([
+            dcm_y = inv([
                 -1.0 0.0 0.0;
                 0.0 1.0 0.0;
                 0.0 0.0 -1.0
                 ])
-            @test dcm_to_q(y_dcm) == Quat(0,0,1,0)
+            @test dcm_to_q(dcm_y) == Quat(0,0,1,0)
 
-            z_dcm = inv([
+            dcm_z = inv([
                 -1.0 0.0 0.0;
                 0.0 -1.0 0.0;
                 0.0 0.0 1.0
                 ])
-            @test dcm_to_q(z_dcm) == Quat(0,0,0,1)
+            @test dcm_to_q(dcm_z) == Quat(0,0,0,1)
         end
 
         @testset "Random rotations" begin
@@ -202,6 +214,85 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
 
         end
     end
+
+    @testset "Q to DCM" begin
+
+        @testset "Identity" begin
+            q = Quat(1,0,0,0)
+            dcm = [
+                1.0 0.0 0.0;
+                0.0 1.0 0.0;
+                0.0 0.0 1.0
+                ]
+                
+            @test q_to_dcm(q) == dcm
+        end
+
+        @testset "180 Degree Axes rotations" begin
+            q_x = Quat(0,1,0,0)
+            dcm_x = inv([
+                1.0 0.0 0.0;
+                0.0 -1.0 0.0;
+                0.0 0.0 -1.0
+                ])
+            @test q_to_dcm(q_x) == dcm_x
+
+            q_y = Quat(0,0,1,0)
+            dcm_y = inv([
+                -1.0 0.0 0.0;
+                0.0 1.0 0.0;
+                0.0 0.0 -1.0
+                ])
+            @test q_to_dcm(q_y) == dcm_y
+
+            q_z = Quat(0,0,0,1)
+            dcm_z = inv([
+                -1.0 0.0 0.0;
+                0.0 -1.0 0.0;
+                0.0 0.0 1.0
+                ])
+            @test q_to_dcm(q_z) == dcm_z
+        end
+
+        @testset "Random rotations" begin
+            # https://www.andre-gaschler.com/rotationconverter/
+
+            q = Quat(0.9914449, 0.0753593, 0.0753593, 0.0753593)
+            dcm = inv([
+                0.9772839  -0.1380712  0.1607873;
+                0.1607873   0.9772839 -0.1380712;
+                -0.1380712   0.1607873  0.9772839
+                ])
+            @test isapprox(q_to_dcm(q), dcm, atol=1e-6)
+
+            q = Quat(0.9799247, 0.0057721, 0.196252, 0.0346327)
+            dcm = inv([
+                0.9205715 -0.0656093  0.3850241;
+                0.0701405  0.9975345  0.0022810;
+                -0.3842245  0.0249059  0.9229037
+            ])
+            @test isapprox(q_to_dcm(q), dcm, atol=1e-6)
+
+            q = Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333)
+            dcm = inv([
+                0.0008382 -0.1452129  0.9894001;
+                0.2022121  0.9689857  0.1420454;
+                -0.9793414  0.1999496  0.0301760
+            ])
+            @test isapprox(q_to_dcm(q), dcm, atol=1e-6)
+        end
+
+        @testset "Non normalized" begin
+            q = Quat(10.0 * 0.9799247, 10.0 * 0.0057721, 10.0 * 0.196252, 10.0 * 0.0346327)
+            dcm = inv([
+                0.9205715 -0.0656093  0.3850241;
+                0.0701405  0.9975345  0.0022810;
+                -0.3842245  0.0249059  0.9229037
+            ])
+            @test isapprox(q_to_dcm(q), dcm, atol=1e-6)
+        end
+    end
+
     @testset "Apply" begin
 
         @testset "Z axis 45 deg around X axis - Active" begin
