@@ -1,6 +1,6 @@
 using Test
 
-using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!
+using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!, dcm_to_q
 using Simwise: RAD_TO_DEG, DEG_TO_RAD
 @testset "Quaternion Tests" begin
     
@@ -139,6 +139,69 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
         end
 
     end
+
+    @testset "DCM to Q" begin
+
+        @testset "Identity" begin
+            dcm = [
+                1.0 0.0 0.0;
+                0.0 1.0 0.0;
+                0.0 0.0 1.0
+                ]
+            q = dcm_to_q(dcm)
+                
+            @test q == Quat(1,0,0,0)
+        end
+
+        @testset "180 Degree Axes rotations" begin
+            x_dcm = inv([
+                1.0 0.0 0.0;
+                0.0 -1.0 0.0;
+                0.0 0.0 -1.0
+                ])
+            @test dcm_to_q(x_dcm) == Quat(0,1,0,0)
+
+            y_dcm = inv([
+                -1.0 0.0 0.0;
+                0.0 1.0 0.0;
+                0.0 0.0 -1.0
+                ])
+            @test dcm_to_q(y_dcm) == Quat(0,0,1,0)
+
+            z_dcm = inv([
+                -1.0 0.0 0.0;
+                0.0 -1.0 0.0;
+                0.0 0.0 1.0
+                ])
+            @test dcm_to_q(z_dcm) == Quat(0,0,0,1)
+        end
+
+        @testset "Random rotations" begin
+            # https://www.andre-gaschler.com/rotationconverter/
+
+            dcm = inv([
+                0.9772839  -0.1380712  0.1607873;
+                0.1607873   0.9772839 -0.1380712;
+                -0.1380712   0.1607873  0.9772839
+                ])
+            @test isapprox(to_vector(dcm_to_q(dcm)), to_vector(Quat(0.9914449, 0.0753593, 0.0753593, 0.0753593)), atol=1e-6)
+
+            dcm = inv([
+                0.9205715 -0.0656093  0.3850241;
+                0.0701405  0.9975345  0.0022810;
+                -0.3842245  0.0249059  0.9229037
+            ])
+            @test isapprox(to_vector(dcm_to_q(dcm)), to_vector(Quat(0.9799247, 0.0057721, 0.196252, 0.0346327)), atol=1e-6)
+
+            dcm = inv([
+                0.0008382 -0.1452129  0.9894001;
+                0.2022121  0.9689857  0.1420454;
+                -0.9793414  0.1999496  0.0301760
+            ])
+            @test isapprox(to_vector(dcm_to_q(dcm)), to_vector(Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333)), atol=1e-6)
+
+        end
+    end
     @testset "Apply" begin
 
         @testset "Z axis 45 deg around X axis - Active" begin
@@ -208,3 +271,5 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
     end
 
 end
+
+nothing
