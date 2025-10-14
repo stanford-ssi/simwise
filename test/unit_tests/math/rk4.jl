@@ -5,7 +5,143 @@ using Simwise.Dynamics: state_from_oe
 using Simwise.Math: rk4_step, Quat
 
 @testset "Propagator Tests" begin
-    @testset "RK4 Integration" begin
+    
+    """Defining derivative functions for RK4 tests"""
+    function constant_deriv(t::Float64, x::Vector{Float64}, dummy_params)
+        return zeros(Float64, length(x))
+    end
+
+    function slope_deriv(t::Float64, x::Vector{Float64}, dummy_params)
+        return ones(Float64, length(x)) * 2
+    end
+
+    function exponential_deriv(t::Float64, x::Float64, dummy_params)
+        return -x
+    end
+
+    function sine_deriv(t::Float64, x::Float64, dummy_params)
+        return cos(t)
+    end
+
+    function logistic_deriv_3(t::Float64, x::Vector{Float64}, dummy_params)
+        r = 1.0
+        K = 10.0
+        return r * x .* (ones(length(x)) - x/K)
+    end
+
+    dummy_params = 0.0
+
+    @testset "RK4 Constant" begin
+        vec = [1.0 ,0.0 ,0.0 ,2.0]
+
+        # random values for dt and t
+        result = rk4_step(1.0, 1.0, vec, constant_deriv, dummy_params)
+        
+        # Should be equal to original vector since slope of 0
+        @test result == vec 
+    end
+
+    @testset "RK4 Constant Slope of 2" begin
+        vec = [1.0, 0.0, 0.0, 2.0]
+
+        # random values for dt and t
+        result = rk4_step(2.0, 0.0, vec, slope_deriv, dummy_params)
+        
+        # Since dx/dt = 2, exact solution e.g.: x = 0.0 + 2*2 = 4.0
+        @test result == [5.0, 4.0, 4.0, 6.0]
+    end
+
+    @testset "RK4 Exponential Decay Single Step" begin
+        x = 4.0
+
+        dt = 0.2
+
+        # random values for dt and t
+        result = rk4_step(dt, 0.0, x, exponential_deriv, dummy_params)
+        
+        # Exact solution: x = 4.0 * e^(-tmax) since x_dot = -x
+        @test isapprox(result, 4*ℯ^(-dt), atol=1e-3)
+    end
+
+    @testset "RK4 Exponential Decay Multi Step" begin
+        x = 4.0
+
+        dt = 0.001;
+        tmax = 10.0;  # Simulates from t = 0 to t = 1.0
+        t = 0.0;
+
+        while t < tmax
+            x = rk4_step(dt, t, x, exponential_deriv, dummy_params)
+            t += dt
+        end
+
+        # Exact solution: x = 4.0 * e^(-tmax) since x_dot = -x
+        @test isapprox(x, 4*ℯ^(-tmax), rtol=1e-2)
+    end
+
+    @testset "RK4 Sine Single Step" begin
+        x = 4.0
+
+        dt = 0.01;
+
+        result = rk4_step(dt, 0.0, x, sine_deriv, dummy_params)
+
+        # Simply finding the result at the new time
+        @test isapprox(result, 4.0 + sin(dt), rtol=1e-3)
+    end
+
+    @testset "RK4 Sine Multi Step 1 Second" begin
+        x0 = 5.0
+
+        dt = 0.01;
+        tmax = 1.0;  # Simulates from t = 0 to t = 10.0
+        t = 0.0;
+        x = x0
+
+        while t < tmax
+            x = rk4_step(dt, t, x, sine_deriv, dummy_params)
+            t += dt
+        end
+
+        # Simply finding the result at the new time
+        @test isapprox(x, x0 + sin(tmax), rtol=1e-3)
+    end
+
+    @testset "RK4 Sine Multi Step 15 Second" begin
+        x0 = 5.0
+
+        dt = 0.005;
+        tmax = 15.0;  # Simulates from t = 0 to t = 10.0
+        t = 0.0;
+        x = x0
+
+        while t < tmax
+            x = rk4_step(dt, t, x, sine_deriv, dummy_params)
+            t += dt
+        end
+
+        # Simply finding the result at the new time
+        @test isapprox(x, x0 + sin(tmax), rtol=1e-3)
+    end
+
+    @testset "RK4 Logistic Growth" begin
+        x0 = [1.0, 2.0, 5.0]
+
+        dt = 0.001;
+        tmax = 15.0;  # Simulates from t = 0 to t = 10.0
+        t = 0.0;
+        x = x0
+
+        while t < tmax
+            x = rk4_step(dt, t, x, logistic_deriv_3, dummy_params)
+            t += dt
+        end
+
+        # Should be near (10, 10, 10) eventually at fairly aggressive logistic growth
+        @test isapprox(x, [10,10,10], atol=1e-4)
+    end
+
+    @testset "RK4 State Integration" begin
         # Test with simple exponential: dx/dt = -k*x (solution: x(t) = x0*exp(-k*t))
         # Using a simple State with just one element varying
 
