@@ -293,6 +293,25 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
         end
     end
 
+    @testset "DCM Round-trip Consistency" begin
+        quats = [
+            Quat(1, 0, 0, 0),
+            Quat(0.9914449, 0.0753593, 0.0753593, 0.0753593),
+            Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333)
+        ]
+        for q in quats
+            dcm = q_to_dcm(q)
+            q2 = dcm_to_q(dcm)
+            @test isapprox(to_vector(q2), to_vector(normalize(q)), atol=1e-6)
+        end
+    end
+
+    @testset "DCM Quaternion Sign Equivalence" begin
+        q = Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333)
+        dcm = q_to_dcm(q)
+        @test q_to_dcm(-q) == dcm
+    end
+
     @testset "Apply" begin
 
         @testset "Z axis 45 deg around X axis - Active" begin
