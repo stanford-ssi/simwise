@@ -102,21 +102,6 @@ function eci_to_ecef(r_eci::Vector{Float64}, gmst::Float64)
 end
 
 """
-    quat_to_dcm(q)
-
-Convert quaternion to direction cosine matrix (DCM).
-
-# Arguments
-- `q::Vector{Float64}`: Quaternion [qx, qy, qz, qw]
-
-# Returns
-- `Matrix{Float64}`: 3x3 DCM
-"""
-function quat_to_dcm(q::Vector{Float64})
-    # TODO: Implement quaternion to DCM conversion
-end
-
-"""
     eci_to_body(r_eci, q)
 
 Transform vector from ECI to body frame.

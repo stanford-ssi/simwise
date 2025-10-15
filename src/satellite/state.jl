@@ -56,14 +56,3 @@ function *(a::Real, s::State)
     return State(q_scaled, a * s.ω, a * s.t, a * s.orbital_elements,
                  a * s.r_eci, a * s.v_eci)
 end
-
-"""
-    normalize_quaternion!(state)
-
-Normalize the quaternion in a state to unit norm (in-place).
-This should be called after each integration step to prevent numerical drift.
-"""
-function normalize_quaternion!(state::State)
-    normalize!(state.q)  # Uses Quat's normalize! function
-    return state
-end

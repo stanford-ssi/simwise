@@ -209,6 +209,63 @@ function q_to_axis_angle(q::Quat, degrees::Bool = false)
 end
 
 ###########################################################################
+#           Direction Cosine Matrix
+###########################################################################
+
+"""
+    https://motoq.github.io/doc/tnotes/dcm
+"""
+function dcm_to_q(dcm::Matrix{Float64})::Quat
+    # TODO: MAKE THIS WORK FOR NON-NORMALIZED MATRICES
+    # # Yeah I did vibe code these 2 lines
+    # U, _, Vt = svd(dcm)
+    # dcm = U * Vt
+
+    c11, c12, c13 = dcm[1,:]
+    c21, c22, c23 = dcm[2,:]
+    c31, c32, c33 = dcm[3,:]
+
+    tr = c11 + c22 + c33
+
+    if tr > c11 && tr > c22 && tr > c33
+        w = sqrt((1 + c11 + c22 + c33) / 4)
+        x = (c23 - c32) / 4 / w
+        y = (c31 - c13) / 4 / w
+        z = (c12 - c21) / 4 / w
+    elseif c11 > c22 && c11 > c33
+        x = sqrt((1 + c11 - c22 - c33) / 4)
+        w = (c23 - c32) / 4 / x
+        y = (c12 + c21) / 4 / x
+        z = (c31 + c13) / 4 / x
+    elseif c22 > c33
+        y = sqrt((1 - c11 + c22 - c33) / 4)
+        w = (c31 - c13) / 4 / y
+        x = (c12 + c21) / 4 / y
+        z = (c23 + c32) / 4 / y
+    else
+        z = sqrt((1 - c11 - c22 + c33) / 4)
+        w = (c12 - c21) / 4 / z
+        x = (c31 + c13) / 4 / z
+        y = (c23 + c32) / 4 / z
+    end
+
+    return Quat(w,x,y,z)
+end
+
+function q_to_dcm(q::Quat)::Matrix{Float64}
+    # In the PDF, it is notated as s,i,j,k, not w,x,y,z
+    normalize!(q)
+    s, i, j, k = q.w, q.x, q.y, q.z
+
+    return [
+        1 - 2(j^2 + k^2)   2(i*j + s*k)   2(i*k - s*j);
+        2(i*j - s*k)       1 - 2(i^2 + k^2) 2(j*k + s*i);
+        2(i*k + s*j)       2(j*k - s*i)   1 - 2(i^2 + j^2)
+    ]
+end
+
+
+###########################################################################
 #           Arithmetic Overloading
 ###########################################################################
 
