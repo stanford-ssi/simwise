@@ -307,9 +307,9 @@ using Simwise: RAD_TO_DEG, DEG_TO_RAD
     end
 
     @testset "DCM Quaternion Sign Equivalence" begin
-        q = Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333)
-        dcm = q_to_dcm(q)
-        @test q_to_dcm(-q) == dcm
+        dcm = q_to_dcm(Quat(0.7071068, 0.0204722, 0.6960552, 0.1228333))
+        dcm_inv = q_to_dcm(Quat(-0.7071068, -0.0204722, -0.6960552, -0.1228333))
+        @test dcm == dcm_inv
     end
 
     @testset "Apply" begin
