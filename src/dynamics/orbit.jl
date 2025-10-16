@@ -2,8 +2,8 @@
 
 using LinearAlgebra
 
-include("../satellite/state.jl")
-include("../satellite/parameters.jl")
+using ..Satellite: State, Parameters
+using ..Constants: μ_earth
 
 """
     propagate_keplerian(state, dt)

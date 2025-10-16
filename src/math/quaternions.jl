@@ -3,7 +3,7 @@
 
 using LinearAlgebra
 
-include("../constants.jl")
+using ..Constants: RAD_TO_DEG, DEG_TO_RAD
 
 """
     Quat
