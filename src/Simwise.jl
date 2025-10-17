@@ -22,7 +22,10 @@ export Parameters, State
 include(joinpath(@__DIR__, "dynamics", "_module.jl"))
 
 include(joinpath(@__DIR__, "simulation", "_module.jl"))
+using .Simulation: propagate, ADCSDriver, SensorPacketData, ReceivePacketData, send_data!, receive_data, wait_for_ready, reset_adcs!
 export propagate
+export ADCSDriver, SensorPacketData, ReceivePacketData
+export send_data!, receive_data, wait_for_ready, reset_adcs!
 
 include(joinpath(@__DIR__, "visualization", "_module.jl"))
 
