@@ -1,5 +1,4 @@
 # Coordinate transformations and utilities
-
 using LinearAlgebra
 using SatelliteToolboxTransformations
 
@@ -128,6 +127,17 @@ Transform vector from ECI to body frame.
 # Returns
 - `Vector{Float64}`: Vector in body frame
 """
+
 function eci_to_body(r_eci::Vector{Float64}, q_eci_to_body::Vector{Float64})
-    # TODO: Implement ECI to body frame transformation
+    # Converts vector in eci to body frame using attitude quaternion" 
+    q_w = q_eci_to_body[1]  # scalar part
+    q_vec = q_eci_to_body[2:4]  # vector part [q1, q2, q3]
+
+    #  v' = v + 2 * q_vec × (q_vec × v + q_w * v)
+    cross1 = cross(q_vec, r_eci)
+    temp = cross1 + q_w * r_eci
+    cross2 = cross(q_vec, temp)
+
+    r_body = r_eci + 2 * cross2
+    return r_body
 end
