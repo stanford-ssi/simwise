@@ -1,7 +1,7 @@
 # Coordinate transformations and utilities
 
 using LinearAlgebra
-using SatelliteToolboxTransformations
+using Simwise.Math: Quat, quat_apply
 
 """
     ecef_to_geocentric(r_ecef)
@@ -104,15 +104,46 @@ end
 """
     eci_to_body(r_eci, q)
 
-Transform vector from ECI to body frame.
+Transform vector from ECI to body frame using quaternion multiplication.
 
 # Arguments
-- `r_eci::Vector{Float64}`: Vector in ECI frame
+- `v_eci::Vector{Float64}`: Vector in ECI frame
 - `q_eci_to_body::Vector{Float64}`: Attitude quaternion from ECI to body (scalar-first: [q0, q1, q2, q3])
 
 # Returns
 - `Vector{Float64}`: Vector in body frame
 """
-function eci_to_body(r_eci::Vector{Float64}, q_eci_to_body::Vector{Float64})
-    # TODO: Implement ECI to body frame transformation
+function eci_to_body(v_eci::Vector{Float64}, q_eci_to_body::Vector{Float64})
+    # Convert vector array to Quat
+    q = Quat(q_eci_to_body)
+
+    # Apply active rotation: v_body = q ⊗ v ⊗ q*
+    # This rotates the vector from ECI to body frame
+    v_body = quat_apply(q, v_eci, false)
+
+    return v_body
+end
+
+"""
+    body_to_eci(v_body, q_eci_to_body)
+
+Transform vector from body frame to ECI frame using quaternion multiplication.
+
+# Arguments
+- `v_eci::Vector{Float64}`: Vector in ECI frame
+- `q_eci_to_body::Vector{Float64}`: Attitude quaternion from ECI to body (scalar-first: [q0, q1, q2, q3])
+
+# Returns
+- `Vector{Float64}`: Vector in body frame
+"""
+function body_to_eci(v_body::Vector{Float64}, q_eci_to_body::Vector{Float64})
+    # Convert vector array to Quat
+    q = Quat(q_eci_to_body)
+    q = quat_conj(q)  # Invert quaternion to go from body to ECI
+
+    # Apply active rotation: v_eci = q ⊗ v ⊗ q*
+    # This rotates the vector from body to ECI frame
+    v_eci = quat_apply(q, v_body, false)
+
+    return v_eci
 end
