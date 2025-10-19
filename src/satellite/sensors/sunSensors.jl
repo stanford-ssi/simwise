@@ -3,22 +3,25 @@ using LinearAlgebra
 using Printf
 using Random
 
-include("../parameters.jl")
-include("../../constants.jl")
+include("parameters.jl")
+include("constants.jl")
 
 """
     sensor_relative_intensities(sun_vec::Vector{Float64})
 
 Compute the relative intensity for each of the 16 sun sensors given a sun vector.
-Input `sun_vec` is expected in the ECI frame (3-vector) and converts to body frame. The function returns an
-array of length 16 with values in [0, 1] representing the cosine projection (clamped at 0).
+Input `sun_vec` is expected in the ECI frame (3-vector) and converts to body frame. The function returns 2 
+array's of length 16 for the intensities (clamped at 0) and voltages.
 """
-function sensor_relative_intensities(sun_vec::Vector{Float64}; rng::AbstractRNG=Random.GLOBAL_RNG, noise_std_intensity::Real=0.0)
-    @assert length(sun_vec) == 3 "sun_vec must be a 3-element vector"
-    s = Vector{Float64}(sun_vec) ./ (norm(sun_vec) == 0 ? eps() : norm(sun_vec))
+function sensor_relative_intensities(sun_vec_eci::Vector{Float64}, rng::AbstractRNG=Random.GLOBAL_RNG)
+    sun_vec_body = eci_to_body(sun_vec_eci, q_eci_to_body)
+    s = Vector{Float64}(sun_vec_body) ./ (norm(sun_vec_body) == 0 ? eps() : norm(sun_vec_body))
 
     intensities = zeros(Float64, NUM_SUN_SENSORS)
+    voltages = zeros(Float64, NUM_SUN_SENSORS)
+
     for i in 1:NUM_SUN_SENSORS
+        # 0-7 are pyramids, 8-15 are flat sensors
         n = SUN_SENSOR_NORMALS[i]
         # Ensure normal is unit (they already are, but normalize for safety)
         n_unit = n ./ norm(n)
@@ -27,22 +30,22 @@ function sensor_relative_intensities(sun_vec::Vector{Float64}; rng::AbstractRNG=
         # Add Gaussian noise to intensity measurement
         intensities[i] += randn(rng) * noise_std_intensity
         # ensure still in [0, 1] 
-        intensities[i] = clamp(intensities[i], 0.0, 1.0)
+        intensities[i] = clamp(intensities[i], 0.0, 1.0) 
+        if intensities[i] < 0.0 
+            @printf("Warning: Intensity for sensor %d is negative: %f\n", i, intensities[i])
+    
+        # calculate current and check against reference voltage
+        irradiance = intensities[i] * solar_constant  # W/m^2
+        current = irradiance * sensor_area * diode_responsitivity  # A
+        voltage = current * resistance # V
+        voltages[i] = voltage
+        if voltage > (i < 8 ? pyramid_ref_voltage : flat_ref_voltage)
+            @printf("Warning: Oversaturation! Voltage for sensor %d exceeds reference: %f V\n", i, voltage)
+        end
     end
-    return intensities
-end
-
-"""
-    sensor_readings_from_sunvec(sun_vec::AbstractVector{<:Real}; I=SUN_SENSOR_CURRENT_A)
-
-Convenience function that takes a sun vector (body frame), computes relative
-intensities and returns a tuple (intensities, voltages).
-"""
-function sensor_readings_from_sunvec(sun_vec::AbstractVector{<:Real}; I::Real=SUN_SENSOR_CURRENT_A, intensity_noise_std::Real=0.0, voltage_noise_std::Real=0.0, rng::AbstractRNG=Random.GLOBAL_RNG)
-    intensities = sensor_relative_intensities(sun_vec; noise_std=intensity_noise_std, rng=rng)
-    voltages = sensor_voltages_from_intensity(intensities; I=I, voltage_noise_std=voltage_noise_std, rng=rng)
     return intensities, voltages
 end
 
-export NUM_SUN_SENSORS, SUN_SENSOR_NORMALS, RESISTANCE_OHMS,
-       sensor_relative_intensities, sensor_voltages_from_intensity, sensor_readings_from_sunvec
+
+
+
