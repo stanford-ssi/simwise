@@ -1,5 +1,5 @@
 using Test
 
-@testset "Simwise Tests" begin
+@testset verbose=true "Simwise Tests" begin
     include("unit_tests/runtests.jl")
 end
