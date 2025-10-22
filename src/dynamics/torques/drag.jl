@@ -2,8 +2,7 @@
 
 using LinearAlgebra
 
-include("../../satellite/state.jl")
-include("../../satellite/parameters.jl")
+using ..Satellite: Parameters, State
 
 """
     drag_torque(state, params)

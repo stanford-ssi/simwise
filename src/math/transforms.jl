@@ -1,7 +1,7 @@
 # Coordinate transformations and utilities
 
 using LinearAlgebra
-using Simwise.Math: Quat, quat_apply
+using ..Math: Quat, quat_apply
 
 """
     ecef_to_geocentric(r_ecef)

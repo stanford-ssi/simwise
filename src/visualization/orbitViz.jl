@@ -2,7 +2,7 @@
 
 # using GLMakie  # or CairoMakie for static plots
 
-include("../satellite/state.jl")
+using ..Satellite: State
 
 """
     plot_orbit(trajectory)

@@ -4,8 +4,8 @@ using SatelliteToolboxGeomagneticField
 using SatelliteToolboxTransformations
 using Dates
 
-include("../math/transforms.jl")
-include("../math/time.jl")
+using ..Math: jd_to_gmst, eci_to_ecef, ecef_to_geocentric, ned_to_eci
+
 """
     magnetic_field_eci(r_eci, jd)
 

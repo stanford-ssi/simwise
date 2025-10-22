@@ -2,9 +2,7 @@
 
 using LinearAlgebra
 
-include("../../satellite/state.jl")
-include("../../satellite/parameters.jl")
-
+using ..Satellite: Parameters, State
 """
     gravity_gradient_torque(state, params)
 
