@@ -6,6 +6,9 @@ using SatelliteToolbox
 using SatelliteToolboxTransformations
 using SatelliteToolboxGeomagneticField
 
+# TODO: figure out what happens to these export things
+
+
 # Optional in case we don't want it I guess
 # __precompile__(false)
 

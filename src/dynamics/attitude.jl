@@ -2,8 +2,9 @@
 
 using LinearAlgebra
 
-using ..Satellite: State, Parameters
-using ..Math: Quat
+include("../satellite/state.jl")
+include("../satellite/parameters.jl")
+include("../math/quaternions.jl")
 
 """
     attitude_dynamics(state, torques, inertia)

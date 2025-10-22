@@ -2,7 +2,7 @@
 
 # using GLMakie  # or CairoMakie for static plots
 
-using ..Satellite: State
+include("../satellite/state.jl")
 
 """
     plot_attitude(trajectory)

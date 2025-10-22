@@ -2,7 +2,7 @@
 
 using SatelliteDynamics
 
-# using Math
+include("../math/time.jl")
 
 """
     sun_vector_eci(jd)

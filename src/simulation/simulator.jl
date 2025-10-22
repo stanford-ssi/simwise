@@ -1,6 +1,7 @@
 # High-level propagator - glue code between dynamics and integration
 
-using ..Satellite: State, Parameters
+include("../satellite/state.jl")
+include("../satellite/parameters.jl")
 
 """
     propagate(state, dt, n_steps, params)

@@ -2,7 +2,8 @@
 
 using LinearAlgebra
 
-using ..Satellite: State, Parameters
+include("../satellite/state.jl")
+include("../satellite/parameters.jl")
 
 """
     propagate_keplerian(state, dt)

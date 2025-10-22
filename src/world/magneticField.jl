@@ -4,7 +4,8 @@ using SatelliteToolboxGeomagneticField
 using SatelliteToolboxTransformations
 using Dates
 
-using Simwise.Math: eci_to_ecef, ned_to_eci, ecef_to_geocentric, jd_to_gmst
+include("../math/transforms.jl")
+include("../math/time.jl")
 """
     magnetic_field_eci(r_eci, jd)
 

@@ -1,5 +1,7 @@
 # Atmospheric density model
 
+include("../constants.jl")
+
 """
     atmospheric_density(altitude)
 
