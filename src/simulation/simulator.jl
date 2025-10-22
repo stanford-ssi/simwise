@@ -1,6 +1,8 @@
 # High-level propagator - glue code between dynamics and integration
 
 using ..Satellite: State, Parameters
+using ..Constants: μ_earth
+
 
 """
     propagate(state, dt, n_steps, params)

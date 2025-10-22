@@ -1,4 +1,5 @@
 # Physical constants
+module Constants
 
 using SatelliteDynamics
 
@@ -17,3 +18,5 @@ const mjd_0 = SatelliteDynamics.MJD_ZERO
 
 const DEG_TO_RAD = pi / 180.0
 const RAD_TO_DEG = 1.0 / DEG_TO_RAD
+
+end

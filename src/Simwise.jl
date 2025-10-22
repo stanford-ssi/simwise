@@ -6,12 +6,15 @@ using SatelliteToolbox
 using SatelliteToolboxTransformations
 using SatelliteToolboxGeomagneticField
 
+# TODO: figure out what happens to these export things
+
+
 # Optional in case we don't want it I guess
 # __precompile__(false)
 
 # Constants
 include("constants.jl")
-export RAD_TO_DEG, DEG_TO_RAD
+export RAD_TO_DEG, DEG_TO_RAD, μ_earth
 
 include(joinpath(@__DIR__, "math", "_module.jl"))
 export Quat, quat_apply, quat_conj, quat_inv, quat_mult

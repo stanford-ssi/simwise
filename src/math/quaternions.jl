@@ -3,7 +3,7 @@
 
 using LinearAlgebra
 
-using Simwise: RAD_TO_DEG, DEG_TO_RAD
+using ..Constants: RAD_TO_DEG, DEG_TO_RAD
 
 """
     Quat

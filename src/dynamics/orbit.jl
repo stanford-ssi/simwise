@@ -2,7 +2,8 @@
 
 using LinearAlgebra
 
-using ..Satellite: State, Parameters
+using ..Satellite: Parameters, State
+using ..Constants: μ_earth
 
 """
     propagate_keplerian(state, dt)

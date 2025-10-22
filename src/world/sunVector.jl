@@ -2,8 +2,6 @@
 
 using SatelliteDynamics
 
-# using Math
-
 """
     sun_vector_eci(jd)
 Compute the Sun vector in ECI coordinates.

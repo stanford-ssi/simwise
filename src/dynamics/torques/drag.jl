@@ -2,7 +2,7 @@
 
 using LinearAlgebra
 
-using ..Satellite: State, Parameters
+using ..Satellite: Parameters, State
 
 """
     drag_torque(state, params)

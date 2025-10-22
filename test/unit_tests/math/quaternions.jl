@@ -1,7 +1,7 @@
 using Test
 
 using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!, dcm_to_q, q_to_dcm
-using Simwise: RAD_TO_DEG, DEG_TO_RAD
+using Simwise.Constants: RAD_TO_DEG, DEG_TO_RAD
 @testset "Quaternion Tests" begin
     
     @testset "Struct and Initialization" begin

@@ -1,7 +1,7 @@
 using Plots
 using LinearAlgebra
 
-using Simwise: μ_earth
+using Simwise.Constants: μ_earth
 using Simwise.Dynamics: propagate_keplerian, state_from_oe
 @testset "Orbital Dynamics Tests" begin
     @testset "Keplerian Propagation - Circular Orbit" begin
