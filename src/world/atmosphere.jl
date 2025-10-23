@@ -41,36 +41,36 @@ function atmosphere_characteristics(altitude_km::Float64, solar_activity::String
     alts = collect(keys(activity_table))
     entries = collect(values(activity_table))
 
-    # Ensure sorted (OrderedDict usually is, but just to be safe)
-    sortperm_idx = sortperm(alts)
-    alts = alts[sortperm_idx]
-    entries = entries[sortperm_idx]
-
     # Find indices bounding the altitude
     upper_idx = searchsortedfirst(alts, altitude_km)
     lower_idx = clamp(upper_idx - 1, 1, length(alts))
     upper_idx = clamp(upper_idx, 1, length(alts))
 
-    lower = entries[lower_idx]
-    upper = entries[upper_idx]
+    lower_entry = entries[lower_idx]
+    upper_entry = entries[upper_idx]
+
+    # Clamp
+    if altitude_km <= alts[1]
+        return AtmosphereEntry(alts[1], entries[1].temp, entries[1].density, entries[1].pressure, entries[1].mol_wt)
+    elseif altitude_km >= alts[end]
+        return AtmosphereEntry(alts[end], entries[end].temp, entries[end].density, entries[end].pressure, entries[end].mol_wt)
+    end
 
     # Linear interpolation helper
     interp(x, x1, x2, y1, y2) = y1 + (x - x1) / (x2 - x1) * (y2 - y1)
 
-    # Handle edge case: if altitude is below or above table range
-    if altitude_km <= alts[1]
-        return (entries[1].temp, entries[1].density, entries[1].pressure, entries[1].mol_wt)
-    elseif altitude_km >= alts[end]
-        return (entries[end].temp, entries[end].density, entries[end].pressure, entries[end].mol_wt)
-    end
-
     # Interpolated values
-    temp     = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower.temp, upper.temp)
-    density  = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower.density, upper.density)
-    pressure = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower.pressure, upper.pressure)
-    mol_wt   = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower.mol_wt, upper.mol_wt)
+    temp = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower_entry.temp, upper_entry.temp)
+    density = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower_entry.density, upper_entry.density)
+    pressure = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower_entry.pressure, upper_entry.pressure)
+    mol_wt = interp(altitude_km, alts[lower_idx], alts[upper_idx], lower_entry.mol_wt, upper_entry.mol_wt)
 
-    return (temp, density, pressure, mol_wt)
+    return AtmosphereEntry(altitude_km, temp, density, pressure, mol_wt)
+end
+
+"""Overload of atmosphere_characteristics for a vector"""
+function atmosphere_characteristics(altitudes_km::AbstractVector, solar_activity::String = "moderate")
+    return [atmosphere_characteristics(alt, solar_activity) for alt in altitudes_km]
 end
 
 
@@ -268,11 +268,6 @@ high_solar_activity = OrderedDict(
 
 # Helpers
 solar_activity_alts = collect(keys(low_solar_activity)) # Same for all tables
-# low_solar_activity_entries = collect(values(low_solar_activity))
-# moderate_solar_activity_entries = collect(values(moderate_solar_activity))
-# high_solar_activity_entries = collect(values(high_solar_activity))
-
-
 
 
 vallado_layers = [
