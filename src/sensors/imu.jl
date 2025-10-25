@@ -3,24 +3,23 @@ IMU gyroscope simulation that does two things:
 Takes ECI vector, converts to body frame using quaternion, 
 adds Gaussian noise and bias to simulate gyro measurements
 =#
+using ..Math: eci_to_body, Quat
 
-include("../math/transforms.jl")
-using Plots
 
 const σ = sqrt(1.523209e-6) ##Standard deviation for gyro noise
 const bias = randn(3) .* (0.3 * σ) ##Bias for gyro noise in body TODO: find proper value... currently arbitrary
 
 ##Function transfroms the angular velocity in ECI frame to body frame then adds noise
-function simulate_imu(eci_gyro::Vector{Float64}, quat_state::Vector{Float64})
-    body_gyro = eci_to_body(eci_gyro, quat_state)
-    add_gauss(body_gyro)
+function simulate_imu(eci_gyro::Vector{Float64}, quat_eci_to_body::Vector{Float64})
+    body_gyro = eci_to_body(eci_gyro, quat_eci_to_body)
+    return add_gauss(body_gyro)
 end
 
 ##Adds gaussian noise to gyro measurements
     
 function add_gauss(vec::Vector{Float64})
     noise = randn(length(vec)) .* σ  # mean = 0, stddev = your value
-    (vec + bias) .+ noise
+    return (vec + bias) .+ noise
 
 end
 
