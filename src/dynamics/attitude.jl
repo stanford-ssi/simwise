@@ -47,8 +47,8 @@ function attitude_dynamics(state::State, torques::Vector{Float64}, inertia::Matr
     # Euler's rotation equation: I * ω_dot = τ - ω × (I * ω)
     # Therefore: ω_dot = I^-1 * (τ - ω × (I * ω))
 
-    # I_ω = inertia * ω                    # I * ω
-    gyroscopic_torque = ω # cross(ω, I_ω)    # ω × (I * ω)
+    I_ω = inertia * ω                    # I * ω
+    gyroscopic_torque = cross(ω, I_ω)    # ω × (I * ω)
     net_torque = torques - gyroscopic_torque  # τ - ω × (I * ω)
 
     ω_dot = inertia \ net_torque         # I^-1 * (τ - ω × (I * ω))
