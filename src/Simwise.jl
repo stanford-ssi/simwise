@@ -21,6 +21,9 @@ export Parameters, State
 
 include(joinpath(@__DIR__, "dynamics", "_module.jl"))
 
+include(joinpath(@__DIR__, "sensors", "_module.jl"))
+export simulate_magnetometer
+
 include(joinpath(@__DIR__, "simulation", "_module.jl"))
 export propagate
 

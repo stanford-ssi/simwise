@@ -1,7 +1,9 @@
 
-include("../math/transforms.jl")
-include("../satellite/state.jl")
+#include("../math/transforms.jl")
+#include("../satellite/state.jl")
 
+using ..Satellite: State
+using ..Math: eci_to_body, Quat
 
 
 #Standard Deviation of Magnetometer [T]
@@ -9,16 +11,16 @@ const σ = 1.5e-8 #value between 15 and 30 nT depending on the count number, usi
 
 
 ##Function transforms the velocity in ECI frame to body frame then adds noise
-function simulate_magnetometer(eci_magno::Vector{Float64})
-    body_magno = eci_to_body(eci_magno, Quat)
-    add_gauss(body_magno)
+function simulate_magnetometer(eci_magno::Vector{Float64}, quat_eci_to_body::Vector{Float64})
+    body_magno = eci_to_body(eci_magno, quat_eci_to_body)
+    return add_gauss(body_magno)
 end
 
 ##Adds gaussian noise to gyro measurements
     
 function add_gauss(vec::Vector{Float64})
-    noise = randn(length(vec)) .* σ  # mean = 0, stddev = your value
-    vec .+ noise
+    noise = randn() * σ  # mean = 0, stddev = your value
+    return vec .+ noise
 
 end
 
