@@ -4,3 +4,5 @@ using Test
     include("orbit.jl")
     include("attitude.jl")
 end
+
+nothing

@@ -126,3 +126,5 @@ using Simwise.World: sun_vector_eci
         println("  ✓ Continuity verified")
     end
 end
+
+nothing

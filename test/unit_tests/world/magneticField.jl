@@ -300,3 +300,5 @@ using Simwise.World: magnetic_field_eci
         println("\n  ✓ All direction tests passed (within 0.5°)")
     end
 end
+
+nothing

@@ -157,3 +157,5 @@ savefig(p, "../src/world/atmosphere_graphs/mol_wt.png")
 
     end
 end
+
+nothing
