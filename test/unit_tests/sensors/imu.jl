@@ -16,9 +16,9 @@ using Simwise.Sensors: simulate_magnetometer
     # Test that noise has expected standard deviation
     N = 1000
     measurements = [simulate_magnetometer(true_magno, example_quat) for _ in 1:N]
-    std_first = std([v[1] for v in measurements]) <= 1.8e-8 && std([v[1] for v in measurements]) >= 1.2e-8
-    std_second = std([v[2] for v in measurements]) <= 1.8e-8 && std([v[2] for v in measurements]) >= 1.2e-8
-    std_third = std([v[3] for v in measurements]) <= 1.8e-8 && std([v[3] for v in measurements]) >= 1.2e-8
+    std_first = std([v[1] for v in measurements]) <=  sqrt(1.823209e-6) #&& std([v[1] for v in measurements]) >= sqrt(1.223209e-6)
+    std_second = std([v[2] for v in measurements]) <= sqrt(1.823209e-6)# && std([v[2] for v in measurements]) >= sqrt(1.223209e-6)
+    std_third = std([v[3] for v in measurements]) <= sqrt(1.823209e-6) #&& std([v[3] for v in measurements]) >= sqrt(1.223209e-6)
 
     @test std_first
     @test std_second

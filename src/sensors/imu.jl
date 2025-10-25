@@ -7,7 +7,7 @@ using ..Math: eci_to_body, Quat
 
 
 const σ = sqrt(1.523209e-6) ##Standard deviation for gyro noise
-const bias = randn(3) .* (0.3 * σ) ##Bias for gyro noise in body TODO: find proper value... currently arbitrary
+const bias =[ 1.2e-4, -3.6e-4, 2.8e-5 ] ##Bias for gyro noise in body... currently it is random value :const bias = randn(3) .* (0.3 * σ)
 
 ##Function transfroms the angular velocity in ECI frame to body frame then adds noise
 function simulate_imu(eci_gyro::Vector{Float64}, quat_eci_to_body::Vector{Float64})
