@@ -1,6 +1,6 @@
 # Spacecraft parameters
 
-"""change
+"""
     Parameters
 
 Spacecraft physical parameters.
@@ -14,7 +14,6 @@ Spacecraft physical parameters.
 struct Parameters
     mass::Float64
     inertia::Matrix{Float64}  # 3x3 inertia tensor
-    inertia::Vector{Float64}  # 3x1 inertia diagonal entries
     area::Float64
     Cd::Float64
 end
