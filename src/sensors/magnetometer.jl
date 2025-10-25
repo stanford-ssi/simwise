@@ -19,7 +19,7 @@ end
 ##Adds gaussian noise to gyro measurements
     
 function add_gauss(vec::Vector{Float64})
-    noise = randn() * σ  # mean = 0, stddev = your value
+    noise = randn(length(vec)) * σ  # mean = 0, stddev = your value
     return vec .+ noise
 
 end
