@@ -271,3 +271,5 @@ using Simwise.Dynamics: propagate_keplerian, state_from_oe
         println("  Measured period: $(elapsed_time/60) min")
     end
 end
+
+nothing

@@ -5,3 +5,5 @@ using Test
     include("quaternions.jl")
     include("transforms.jl")
 end
+
+nothing

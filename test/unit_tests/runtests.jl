@@ -5,3 +5,5 @@ using Test
     include("math/runtests.jl")
     include("world/runtests.jl")
 end
+
+nothing

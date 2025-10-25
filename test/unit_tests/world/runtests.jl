@@ -5,3 +5,5 @@ using Test
     include("magneticField.jl")
     include("sunVector.jl")
 end
+
+nothing
