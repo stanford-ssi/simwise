@@ -6,5 +6,9 @@ using LinearAlgebra
 
 include("attitudeViz.jl")
 include("orbitViz.jl")
+include("visualize.jl")
+
+# Export the main visualization function
+export visualize
 
 end
