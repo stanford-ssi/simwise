@@ -28,7 +28,6 @@ Compute attitude state derivatives (quaternion and angular velocity rates).
 """
 
 function rigid_body_derivative(t::Float64, state::Vector{Float64}, parameters::Parameters)
-    r = state[1:3]
     v = state[4:6]
     q = state[7:10]
     ω = state[11:13]

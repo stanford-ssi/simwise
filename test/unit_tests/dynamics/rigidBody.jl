@@ -33,7 +33,34 @@ using Simwise.Dynamics: rigid_body_derivative
         @test dot[4:6] == [0.5, 0.0, 0.0]
         @test dot[7:10] == [0.0, 0.0, 0.0, 0.0]
         @test dot[11:13] == [0.0, 0.0, 0.0]
+    end
 
+    @testset "Torque No Force" begin
+
+        q = Quat() # Identity
+        ω = [0,0,pi] # Rotating by π rad/s
+
+        # Initialized with (mass, inertia, force, torque) constructor
+        params = Parameters(
+            2.0, # kg
+            diagm([2.0, 2.0, 2.0]), # Inertia
+            zeros(3), # no force
+            [1.0, 2.0, 4.0] # x direction torque
+        )
+        
+        state = [
+            0.0, 0.0, 0.0, # r = 0
+            1.1, 1.2, 1.3, # v = 0
+            1.0, 0.0, 0.0, 0.0, # Identity quaternion
+            0.0, 0.0, 0.0 # ω = 0
+            ]
+
+        dot = rigid_body_derivative(0.0, state, params)
+
+        @test dot[1:3] == [1.1, 1.2, 1.3]
+        @test dot[4:6] == [0.0, 0.0, 0.0]
+        @test dot[7:10] == [0.0, 0.0, 0.0, 0.0]
+        @test dot[11:13] == [0.5, 1.0, 2.0]
     end
 end
 
