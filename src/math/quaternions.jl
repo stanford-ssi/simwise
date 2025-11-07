@@ -115,23 +115,6 @@ end
 ###########################################################################
 
 """
-    hamilton_product(q, ω)
-
-Hamilton product (Schaub 3.112)
-"""
-function hamilton_product(q::Quat, ω::Vector{Float64})
-    # Extract scalar and vector parts
-    beta = [
-        -q.x -q.y -q.z;
-        q.w -q.z q.y;
-        q.z q.w -q.x;
-        -q.y q.x q.w
-    ]
-    return beta * ω
-end
-
-
-"""
     quat_mult(q1::Quat, q2::Quat)
 
 Quaternion multiplication (Hamilton product): q1 ⊗ q2
