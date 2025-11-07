@@ -66,9 +66,13 @@ run_hil_simulation(duration=3600.0, dt=0.01)
 ```
 
 ## Running Tests
-In the root `simwise` directory:
+To run tests with the test script run
 ```bash
-julia --project=. -e 'using Pkg; Pkg.test()'
+chmod +x runtests.sh # Enables you to execute this file as a bash script
+```
+To run the tests in the `simwise` directory:
+```bash
+./runtests.sh
 ```
 
 ### Testing GitHub Actions Locally
