@@ -46,5 +46,10 @@ function rigid_body_derivative(t::Float64, state::Vector{Float64}, parameters::P
     τ = parameters.torque_body
     ω_dot = I_inv * (τ - cross(ω, I * ω))
 
+    # println(length(r_dot))
+    # println(length(v_dot))
+    # println(length(q_dot))
+    # println(length(ω_dot))
+
     return vcat(r_dot, v_dot, q_dot, ω_dot)
 end

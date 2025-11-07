@@ -3,7 +3,7 @@ using LinearAlgebra
 
 using Simwise.Constants: μ_earth
 using Simwise.Dynamics: rigid_body_derivative
-using Simwise.Math: rk4_step
+using Simwise.Math: rk4_step, to_vector
 #propagate_keplerian, state_from_oe
 
 
@@ -168,43 +168,58 @@ end
         @test next_step[7:10] == [1.0, 0.0, 0.0, 0.0]
         @test next_step[11:13] == [0.0, 0.0, 0.0]
 
-        print("Time: ")
+        print("RK4 Integration (Force) time: ")
         print(time() - begin_time)
         println(" s")
     end
 
-    # @testset "Torque" begin
+    @testset "π Rotation" begin
+
+        begin_time = time()
+        dt = 0.001
+        t_max = 3.14159
+
+        I = [
+            15.0 0.0 0.0;
+            0.0 15.0 0.0;
+            0.0 0.0 4.0
+        ]
+
+        # Initialized with (mass, inertia, force, torque) constructor
+        params = Parameters(
+            1.0, # kg
+            diagm([1.0, 1.0, 1.0]), # Inertia
+            [0.0, 0.0, 0.0], # force for acceleration
+            [0.0, 0.0, 0.0] # torque
+        )
+
+        state = [
+            0.0,0.0,0.0, # 0 m
+            0.0,0.0,0.0, # 0 m/s
+            1.0, 0.0, 0.0, 0.0, # Identity
+            1.0, 0.0, 0.0 # 1 rad per second for 
+            ]
         
-    #     begin_time = time()
-    #     dt = 0.001
-    #     t_max = 1.0
+        next_step = propagate(dt, t_max, state, params)
 
-    #     # Initialized with (mass, inertia, force, torque) constructor
-    #     params = Parameters(
-    #         17.0, # kg
-    #         diagm([1.0, 1.0, 1.0]), # Inertia
-    #         [0.0, 0.0, 0.0], # force for acceleration
-    #         [0.0, 0.0, 0.0] # torque
-    #     )
+        # Testing to make sure position aligns with kinematics
+        @test isapprox(next_step[1:3], [0,0,0], rtol=1e-3)
+        @test isapprox(next_step[4:6], [0,0,0], rtol=1e-3)
 
-    #     state = [
-    #         0.1, 100.4, 5.0, # r
-    #         1.1, 1.2, 1.3, # v
-    #         1.0, 0.0, 0.0, 0.0, # Identity
-    #         0.0, 0.0, 0.0
-    #         ]
-        
-    #     next_step = propagate(dt, t_max, state, params)
+        # @test next_step[7:10] == [1.0, 0.0, 0.0, 0.0]
+        @test isapprox(next_step[7:10], [0,1,0,0], rtol=1e-2)
+        @test isapprox(next_step[11:13], [1.0, 0.0, 0.0], rtol=1e-2)
 
-    #     # x_f = x_0 + v_f*t + 0.5*a*t*t
-    #     # v_f = v_0 + a*t
-    #     @test isapprox(next_step[1:3], [1.2294117647058824, 101.89411764705883, 9.241176470588236], rtol=1e-3)
-    #     @test isapprox(next_step[4:6], [1.1588235294117648, 1.788235294117647, 7.182352941176471], rtol=1e-3)
+        print("RK4 Integration (π Rotation) time: ")
+        print(time() - begin_time)
+        println(" s")
+    end
 
-    #     print("Time: ")
-    #     print(time() - begin_time)
-    #     println(" s")
-    # end
+    @testset "Torque" begin
+
+        # This is nonlinear so we just gotta trust that it works correctly because textbook formulas
+    
+    end
 
 
 
