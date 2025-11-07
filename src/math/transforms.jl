@@ -147,3 +147,89 @@ function body_to_eci(v_body::Vector{Float64}, q_eci_to_body::Vector{Float64})
 
     return v_eci
 end
+
+mutable struct OrbitalElements
+    a::Float64 #  Semi-major axis [km]
+    e::Float64 #  Eccentricity
+    i::Float64 #  Inclination [rad]
+    Ω::Float64 #  Right ascension of ascending node (RAAN) [rad]
+    ω::Float64 #  Argument of periapsis [rad]
+    ν::Float64 #  True anomaly [rad]
+end
+
+
+"""
+    rv_to_orbital_elements(r, v, forces)
+
+Compute orbital elements (position and velocity).
+
+# Arguments
+- `r_eci::Vector{Float64}`: Position of satellite [km] (ECI)
+- `v_eci::Vector{Float64}`: Velocity of satellite [km/s] (ECI)
+- `μ::Float64`: Gravitational parameter of central body [km3/s2] (typically the earth)
+
+# Returns
+- `OrbitalElements`: Orbital Elements struct
+"""
+function rv_to_orbital_elements(r_eci::Vector{Float64}, v_eci::Vector{Float64}, μ::Float64)
+    # Specific relative angular momentum
+    h_eci = cross(r_eci,v_eci) 
+    h = norm(h_eci)
+
+    # Vector pointing to ascending node
+    n_eci = cross([0.0,0.0,1.0], h_eci) 
+    n = norm(n_eci)
+    equatorial = isapprox(n, 0.0, atol=1e-8)
+    
+    # Norms to make this easier
+    r = norm(r_eci)
+    v = norm(v_eci)
+    
+    # Eccentricity
+    e_eci = ((v^2 - μ/r) * r_eci - dot(r_eci, v_eci) * v_eci ) / μ
+    e = norm(e_eci)
+    circular = isapprox(e, 0.0, atol=1e-8)
+    
+    # Specific Orbital Energy [km^2/s^2]
+    ϵ = (v^2)/2 - μ/r
+    
+    # Semi-major Axis [km]
+    a = isapprox(e, 1.0, atol=1e-5) ? Inf : -μ/(2ϵ) 
+
+    # Inclination [rad]
+    i = acos(h_eci[3]/h)
+
+    # Right ascension of the ascending node [rad]
+    if !equatorial
+        Ω = acos(clamp( n_eci[1]/n, -1, 1))
+        if n_eci[2] < 0
+            Ω = 2*pi - Ω
+        end
+    else
+        Ω = 0.0
+    end
+
+    # Argument of periapse
+    if !equatorial && !circular
+        ω = acos(clamp( dot(n_eci,e_eci)/e/n, -1, 1))
+        if e_eci[3] < 0
+            ω = 2*pi - ω
+        end
+    else
+        ω = 0.0
+    end
+
+
+    # True anomaly
+    if !circular
+        ν = acos(clamp( dot(r_eci,e_eci)/e/r, -1, 1))
+        if dot(r_eci, v_eci) < 0
+            ν = 2*pi - ν
+        end
+    else
+        ν = 0.0
+    end
+
+    return OrbitalElements(a, e, i, Ω, ω, ν)
+
+end
