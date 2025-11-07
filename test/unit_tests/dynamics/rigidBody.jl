@@ -77,7 +77,7 @@ using Simwise.Math: rk4_step
         state = [
             0.0, 0.0, 0.0, # r = 0
             1.1, 1.2, 1.3, # v = 0
-            0.5, 0.5, 0.5, 0.5, # Identity quaternion
+            0.5, 0.5, 0.5, 0.5,
             2.0, 3.14, 3.52 # ω = 0
             ]
 
@@ -92,7 +92,17 @@ using Simwise.Math: rk4_step
 
 end
 
-@testset "Rigid Body Integration" begin
+@testset "Rigid Body RK4 Integration" begin
+
+    function propagate(dt, t_max, initial_state, params)
+        state = initial_state
+        for t in 0:dt:t_max
+            state = rk4_step(dt, t, state, rigid_body_derivative, params)
+            state[7:10] /= norm(state[7:10])
+        end
+
+        return state
+    end
     @testset "0 Time" begin
         
         dt = 0.0
@@ -115,7 +125,7 @@ end
         state = [
             0.0, 0.0, 0.0, # r = 0
             1.1, 1.2, 1.3, # v = 0
-            0.5, 0.5, 0.5, 0.5, # Identity quaternion
+            0.5, 0.5, 0.5, 0.5,
             2.0, 3.14, 3.52 # ω = 0
             ]
         
@@ -123,6 +133,80 @@ end
 
         @test next_step == state # No change in state
     end
+
+
+
+    @testset "Force" begin
+        
+        begin_time = time()
+        dt = 0.001
+        t_max = 1.0
+
+        # Initialized with (mass, inertia, force, torque) constructor
+        params = Parameters(
+            17.0, # kg
+            diagm([1.0, 1.0, 1.0]), # Inertia
+            [1.0, 10.0, 100.0], # force for acceleration
+            [0.0, 0.0, 0.0] # torque
+        )
+
+        state = [
+            0.1, 100.4, 5.0, # r
+            1.1, 1.2, 1.3, # v
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0
+            ]
+        
+        next_step = propagate(dt, t_max, state, params)
+
+        # x_f = x_0 + v_f*t + 0.5*a*t*t
+        # v_f = v_0 + a*t
+        @test isapprox(next_step[1:3], [1.2294117647058824, 101.89411764705883, 9.241176470588236], rtol=1e-3)
+        @test isapprox(next_step[4:6], [1.1588235294117648, 1.788235294117647, 7.182352941176471], rtol=1e-3)
+
+        # Testing to make sure attitude is not affected
+        @test next_step[7:10] == [1.0, 0.0, 0.0, 0.0]
+        @test next_step[11:13] == [0.0, 0.0, 0.0]
+
+        print("Time: ")
+        print(time() - begin_time)
+        println(" s")
+    end
+
+    # @testset "Torque" begin
+        
+    #     begin_time = time()
+    #     dt = 0.001
+    #     t_max = 1.0
+
+    #     # Initialized with (mass, inertia, force, torque) constructor
+    #     params = Parameters(
+    #         17.0, # kg
+    #         diagm([1.0, 1.0, 1.0]), # Inertia
+    #         [0.0, 0.0, 0.0], # force for acceleration
+    #         [0.0, 0.0, 0.0] # torque
+    #     )
+
+    #     state = [
+    #         0.1, 100.4, 5.0, # r
+    #         1.1, 1.2, 1.3, # v
+    #         1.0, 0.0, 0.0, 0.0, # Identity
+    #         0.0, 0.0, 0.0
+    #         ]
+        
+    #     next_step = propagate(dt, t_max, state, params)
+
+    #     # x_f = x_0 + v_f*t + 0.5*a*t*t
+    #     # v_f = v_0 + a*t
+    #     @test isapprox(next_step[1:3], [1.2294117647058824, 101.89411764705883, 9.241176470588236], rtol=1e-3)
+    #     @test isapprox(next_step[4:6], [1.1588235294117648, 1.788235294117647, 7.182352941176471], rtol=1e-3)
+
+    #     print("Time: ")
+    #     print(time() - begin_time)
+    #     println(" s")
+    # end
+
+
 
 end
 

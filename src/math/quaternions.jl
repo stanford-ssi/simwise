@@ -127,7 +127,7 @@ function hamilton_product(q::Quat, ω::Vector{Float64})
         q.z q.w -q.x;
         -q.y q.x q.w
     ]
-    return beta * ω
+    return Vector(beta * ω)
 end
 
 
