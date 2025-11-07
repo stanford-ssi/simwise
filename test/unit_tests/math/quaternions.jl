@@ -1,6 +1,6 @@
 using Test
 
-using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!, dcm_to_q, q_to_dcm
+using Simwise.Math: Quat, quat_apply, quat_conj, quat_inv, quat_mult, to_vector, q_to_axis_angle, angle_axis_to_q, normalize, normalize!, dcm_to_q, q_to_dcm, hamilton_product
 using Simwise.Constants: RAD_TO_DEG, DEG_TO_RAD
 
 @testset "Quaternion Tests" begin
@@ -65,6 +65,18 @@ using Simwise.Constants: RAD_TO_DEG, DEG_TO_RAD
         q2 = Quat(2, -1, 2, 3)
         q3 = quat_mult(q1, q2)
         @test q3 == Quat(8,-9,-2,11)
+    end
+
+    @testset "Hamilton Product" begin
+        q = Quat(2.0, 2.0, 2.0, 2.0)
+        ω = [1.0 ,2.0 ,3.0]
+        result = hamilton_product(q, ω)
+        @test result == [-12.0, 4.0, 0, 8.0]
+
+        q = Quat(100.0,1.0,4.0,113.0)
+        ω = [22.0,-3.0,-123.0]
+        result = hamilton_product(q, ω)
+        @test result == [13889,2047,2309,-12391]
     end
 
     @testset "Axis Angle to Q" begin
