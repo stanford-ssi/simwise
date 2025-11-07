@@ -4,7 +4,7 @@ using LinearAlgebra
 
 using ..Satellite: Parameters, State
 using ..Constants: μ_earth
-using ..Math: Quat, quat_mult
+using ..Math: Quat, quat_mult, hamilton_product
 
 
 """
@@ -39,7 +39,7 @@ function rigid_body_derivative(t::Float64, state::Vector{Float64}, parameters::P
     v_dot = parameters.force_eci / parameters.mass
 
     # Quaternion derivative is based on hamilton product (Schaub 3.111)
-    q_dot = 0.5 * quat_mult(Quat(q), Quat(vcat(0, ω)))
+    q_dot = 0.5 * hamilton_product(Quat(q), ω)
 
     # Angular derivative based on (Schaub 4.34-35)
     I = parameters.inertia_body
