@@ -1,7 +1,7 @@
 using Test
 using LinearAlgebra
 
-using Simwise.Math: rv_to_orbital_elements, OrbitalElements
+using Simwise.Math: rv_to_orbital_elements, orbital_elements_to_rv, OrbitalElements
 using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 @testset "Orbital Element Transform Tests" begin
 

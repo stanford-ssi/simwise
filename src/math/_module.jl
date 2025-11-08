@@ -14,7 +14,7 @@ include("time.jl")
 export jd_to_gmst
 
 include("transforms.jl")
-export eci_to_ecef, ned_to_eci, ecef_to_geocentric, rv_to_orbital_elements
+export eci_to_ecef, ned_to_eci, ecef_to_geocentric, rv_to_orbital_elements, orbital_elements_to_rv
 
 
 end
