@@ -1,10 +1,11 @@
 using Test
 using LinearAlgebra
 
-using Simwise.Math: rv_to_orbital_elements, orbital_elements_to_rv, OrbitalElements
+using Simwise.Math: rv_to_orbital_elements, orbital_elements_to_rv, OrbitalElements, sma_to_orbit_period, orbit_period_to_sma, mean_motion_to_sma
 using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 
-μ = 398600.4418 # km3/s2
+μ = 398600.4418 # km3/s2 TODO: change when the constant in Constants is in correct units
+
 @testset "Orbital Element Transform Tests" begin
 
     @testset "rv to coes" begin
@@ -161,6 +162,24 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 
     end
 
+end
+
+@testset "Orbital Element Time Tests" begin
+    @testset "Orbital Period to Semi-Major Axis" begin
+        # Vallado 4th edition pg. 31
+        @test isapprox(orbit_period_to_sma(86164.090518, μ), 42164.1696, atol=.001)
+    end
+
+    @testset "Semi-Major Axis to Orbital Period" begin
+        # Vallado 4th edition pg. 31
+        @test isapprox(sma_to_orbit_period(42164.1696, μ), 86164.090518, atol=.001)
+    end
+
+    @testset "Mean Motion to Semi-Major Axis" begin
+        # ISS data
+        # (not much of a validation, since there is no semi-major axis in the TLE, but a sanity-check for ballpark)
+        @test isapprox(mean_motion_to_sma(15.4978258, μ), 7071.85952, atol=.001)
+    end
 end
 
 nothing
