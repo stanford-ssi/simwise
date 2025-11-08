@@ -265,7 +265,7 @@ function orbital_elements_to_rv(coes::OrbitalElements, μ::Float64)
     r_pf = r_mag * [cos(coes.ν), sin(coes.ν), 0.0]
 
     # Velocity in perifocal frame
-    v_pf = sqrt(μ_earth / p) * [-sin(coes.ν), e + cos(coes.ν), 0.0]
+    v_pf = sqrt(μ / p) * [-sin(coes.ν), coes.e + cos(coes.ν), 0.0]
 
     # Rotation matrix from perifocal to ECI
     # R = R3(-Ω) * R1(-i) * R3(-ω)

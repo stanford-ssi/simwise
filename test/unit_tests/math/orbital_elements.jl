@@ -3,6 +3,8 @@ using LinearAlgebra
 
 using Simwise.Math: rv_to_orbital_elements, orbital_elements_to_rv, OrbitalElements
 using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
+
+μ = 398600.4418 # km3/s2
 @testset "Orbital Element Transform Tests" begin
 
     @testset "rv to coes" begin
@@ -11,7 +13,6 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
             # Vallado 4th Edition, pg 115
             r = [6524.834, 6862.875, 6448.296] # km
             v = [4.901327, 5.533756, -1.976341] # km/s
-            μ = 398600.4418 # km3/s2
 
             orbital_elements = rv_to_orbital_elements(r, v, μ)
 
@@ -28,7 +29,6 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 
             r = [100.0, 1300.0, -6000.0] # km
             v = [0.1, -1.0, 2.1] # km/s
-            μ = 398600.4418 # km3/s2
 
             orbital_elements = rv_to_orbital_elements(r, v, μ)
 
@@ -42,11 +42,9 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 
         @testset "Circular" begin
             # http://orbitsimulator.com/formulas/OrbitalElements.html
-            # TODO 7.656278815328648
 
             r = [6000.0, 4713.675910949817, 1000.0] # km
             v = [4.446, -5.658, 0.0] # km/s (circular orbit)
-            μ = 398600.4418 # km3/s2
 
             orbital_elements = rv_to_orbital_elements(r, v, μ)
 
@@ -63,7 +61,6 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 
             r = [6800.0, 0.0, 0.0] # km
             v = [0.0, 8.656278815328648, 0.0] # km/s (equitorial orbit)
-            μ = 398600.4418 # km3/s2
 
             orbital_elements = rv_to_orbital_elements(r, v, μ)
 
@@ -78,7 +75,6 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 
             r = [6686, 0.0, 968.35] # km
             v = [0.0, 0.0, -5.899127972862638] # km/s (circular orbit)
-            μ = 398600.4418 # km3/s2
 
             orbital_elements = rv_to_orbital_elements(r, v, μ)
 
@@ -95,7 +91,6 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
             
             r = [7000, 2.0, 0.0] # km
             v = [1.2, -2.0, 0.0] # km/s (equitorial orbit, but reverse)
-            μ = 398600.4418 # km3/s2
             
             orbital_elements = rv_to_orbital_elements(r, v, μ)
             
@@ -103,6 +98,62 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
             @test isapprox(orbital_elements.e, 0.930685, atol=1e-4)
             @test isapprox(orbital_elements.i * RAD_TO_DEG, 180.0, rtol=1e-5)
             # Ω, ω, and ν are undefined for equatorial orbits (can be any value)
+        end
+
+    end
+
+    @testset "coes to rv" begin
+        @testset "Vallado Example" begin
+            # Vallado 4th Edition, pg 119
+
+            coes = OrbitalElements(
+                36126.64,
+                0.83285,
+                87.87 * DEG_TO_RAD,
+                227.89 * DEG_TO_RAD,
+                53.38 * DEG_TO_RAD,
+                92.335 * DEG_TO_RAD,
+            )
+
+            r,v = orbital_elements_to_rv(coes, μ)
+
+            @test isapprox(r, [6525.344, 6861.535, 6449.125], atol=0.1)
+            @test isapprox(v, [4.902276, 5.533124, -1.975709], atol=0.0001)
+        end
+        
+        @testset "Random Example" begin
+            # http://orbitsimulator.com/formulas/OrbitalElements.html
+            coes = OrbitalElements(
+                3203.754267903962,
+                0.9955257908191099,
+                93.90569432920545 * DEG_TO_RAD,
+                283.91249467651966 * DEG_TO_RAD,
+                77.26657593515651 * DEG_TO_RAD,
+                181.10299292301673 * DEG_TO_RAD,
+            )
+
+            r,v = orbital_elements_to_rv(coes, μ)
+
+            @test isapprox(r, [100.0, 1300.0, -6000.0], atol=0.00001)
+            @test isapprox(v, [0.1, -1.0, 2.1], atol=0.0001)
+        end
+
+        @testset "Circular" begin
+            # http://orbitsimulator.com/formulas/OrbitalElements.html
+            coes = OrbitalElements(
+                7692.648,
+                0.0,
+                172.53 * DEG_TO_RAD,
+                283.91249467651966 * DEG_TO_RAD,
+                0.0,
+                0.0
+            )
+            # ω, and ν are undefined for circular orbits (can be any value)
+
+            r,v = orbital_elements_to_rv(coes, μ)
+
+            @test isapprox(r, [6000.0, 4713.675910949817, 1000.0], atol=0.00001)
+            @test isapprox(v, [4.446, -5.658, 0.0], atol=0.0001)
         end
 
     end
