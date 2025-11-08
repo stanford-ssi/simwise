@@ -138,23 +138,26 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
             @test isapprox(v, [0.1, -1.0, 2.1], atol=0.0001)
         end
 
-        @testset "Circular" begin
+        @testset "90 Inclination" begin
             # http://orbitsimulator.com/formulas/OrbitalElements.html
             coes = OrbitalElements(
-                7692.648,
-                0.0,
-                172.53 * DEG_TO_RAD,
-                283.91249467651966 * DEG_TO_RAD,
-                0.0,
-                0.0
+                4848.9197268518665,
+                0.3938736352565609,
+                90.0 * DEG_TO_RAD,
+                180.0 * DEG_TO_RAD,
+                353.8847334059262 * DEG_TO_RAD,
+                177.87427980631205 * DEG_TO_RAD,
             )
-            # ω, and ν are undefined for circular orbits (can be any value)
 
             r,v = orbital_elements_to_rv(coes, μ)
 
-            @test isapprox(r, [6000.0, 4713.675910949817, 1000.0], atol=0.00001)
-            @test isapprox(v, [4.446, -5.658, 0.0], atol=0.0001)
+            @test isapprox(r, [6686, 0.0, 968.35], atol=1e-6)
+            @test isapprox(v, [1.0, 0.0, -5.899127972862638], atol=1e-4)
         end
+
+        # Not testing Circular Equatorial, Circular Inclined, and Elliptical Equatorial cases
+        # we'd realistically only be using the rv_to_coes function since the source of truth
+        # for position are our r and v vectors
 
     end
 

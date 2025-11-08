@@ -255,6 +255,10 @@ Convert classical Keplerian orbital elements to ECI position and velocity vector
 """
 function orbital_elements_to_rv(coes::OrbitalElements, μ::Float64)
 
+    # TODO: There should be exceptions for Circular Equatorial, Circular Inclined, and Elliptical Equatorial
+    # but those require the r vector so we could?? iterate? but our state should be tracked in r,v anyways
+    # so we'd realistically only be using the rv_to_coes function
+
     # Compute position and velocity in perifocal frame
     p = coes.a * (1 - coes.e^2)  # semi-latus rectum
 
