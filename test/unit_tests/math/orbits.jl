@@ -165,21 +165,32 @@ using Simwise.Constants: DEG_TO_RAD, RAD_TO_DEG
 end
 
 @testset "Orbital Element Time Tests" begin
-    @testset "Orbital Period to Semi-Major Axis" begin
-        # Vallado 4th edition pg. 31
-        @test isapprox(orbit_period_to_sma(86164.090518, μ), 42164.1696, atol=.001)
-    end
-
-    @testset "Semi-Major Axis to Orbital Period" begin
-        # Vallado 4th edition pg. 31
-        @test isapprox(sma_to_orbit_period(42164.1696, μ), 86164.090518, atol=.001)
-    end
 
     @testset "Mean Motion to Semi-Major Axis" begin
         # ISS data
         # (not much of a validation, since there is no semi-major axis in the TLE, but a sanity-check for ballpark)
         @test isapprox(mean_motion_to_sma(15.4978258, μ), 7071.85952, atol=.001)
     end
+    @testset "Orbital Period to Semi-Major Axis" begin
+        # Vallado 4th edition pg. 31
+        @test isapprox(orbit_period_to_sma(86164.090518, μ), 42164.1696, atol=.001)
+
+        period = 92.9 * 60 # ISS orbital period [s]
+        sma = mean_motion_to_sma(15.4978258, μ) # semi-major axis [km]
+        @test isapprox(orbit_period_to_sma(period, μ), sma, atol=.001)
+    end
+    
+    @testset "Semi-Major Axis to Orbital Period" begin
+        # Vallado 4th edition pg. 31
+        @test isapprox(sma_to_orbit_period(42164.1696, μ), 86164.090518, atol=.001)
+
+        period = 92.9 * 60 # ISS orbital period [s]
+        sma = mean_motion_to_sma(15.4978258, μ) # semi-major axis [km]
+        @test isapprox(sma_to_orbit_period(sma, μ), period, atol=.001)
+    end
+
+    
 end
+    
 
 nothing
