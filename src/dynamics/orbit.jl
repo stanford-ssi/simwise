@@ -62,7 +62,7 @@ end
 """
     state_from_oe(q, ω, t, orbital_elements)
 
-Create a State from orbital elements, automatically computing r_eci and v_eci.
+Create a State struct from orbital elements, automatically computing r_eci and v_eci.
 
 # Arguments
 - `q::Vector{Float64}`: Quaternion [q0, q1, q2, q3] (scalar-first)
@@ -129,21 +129,3 @@ function orbital_elements_to_eci(a::Float64, e::Float64, i::Float64, Ω::Float64
     return (r_eci, v_eci)
 end
 
-"""
-    orbital_dynamics(state, forces)
-
-Compute orbital state derivatives (position and velocity rates).
-
-# Arguments
-- `state::State`: Current state
-- `forces::Vector{Float64}`: Total external forces [N] (ECI frame)
-
-# Returns
-- `r_dot::Vector{Float64}`: Velocity [m/s]
-- `v_dot::Vector{Float64}`: Acceleration [m/s^2]
-"""
-function orbital_dynamics(state::State, forces::Vector{Float64})
-    # TODO: Implement orbital dynamics
-    # r_dot = v
-    # v_dot = -μ/r^3 * r + forces/m
-end

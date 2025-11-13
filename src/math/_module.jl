@@ -7,6 +7,8 @@ using LinearAlgebra
 include("integrators.jl")
 export rk4_step
 
+include("orbits.jl")
+
 include("quaternions.jl")
 export Quat, quat_apply, quat_conj, quat_inv, quat_mult, q_to_axis_angle, angle_axis_to_q, hamilton_product
 
