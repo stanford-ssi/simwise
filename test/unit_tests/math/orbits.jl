@@ -189,6 +189,18 @@ end
         @test isapprox(sma_to_orbit_period(sma, μ), period, atol=.001)
     end
 
+# TODO: implement these to check the functions
+    """
+| Orbit Type                                    | Altitude (km) | Semi-Major Axis a = Rₑ + h (km) | Period T (s) | Period (min)     | Source / Notes                                         |
+| --------------------------------------------- | ------------- | ------------------------------- | ------------ | ---------------- | ------------------------------------------------------ |
+| **ISS / LEO**                                 | 408           | 6779                            | 5549.8       | 92.5             | NASA ISS Fact Sheet                                    |
+| **Sun-Synchronous (typical)**                 | 720           | 7091                            | 5973.0       | 99.6             | Common for Earth observation (e.g., Landsat, Sentinel) |
+| **Polar LEO (alt. 1000 km)**                  | 1000          | 7371                            | 6283.2       | 104.7            | General reference for high LEO                         |
+| **MEO (GPS)**                                 | 20200         | 26571                           | 43082.0      | 718.0 (≈11.97 h) | GPS constellation standard                             |
+| **Molniya (apogee 39750 km, perigee 600 km)** | —             | 26600 (mean)                    | 43000        | 716.7            | High-eccentricity 12h orbit                            |
+| **GEO (Geostationary)**                       | 35786         | 42157                           | 86164.1      | 1436.1 (23h56m)  | Standard GEO, 1 sidereal day period                    |
+
+    """
     
 end
     
