@@ -17,7 +17,7 @@ end
 
 
 """
-    rv_to_orbital_elements(r_eci, v_eci, forces)
+    rv_to_orbital_elements(r_eci, v_eci, μ)
 
 Convert ECI position and velocity vectors to classical Keplerian orbital elements.
 
@@ -93,7 +93,7 @@ function rv_to_orbital_elements(r_eci::Vector{Float64}, v_eci::Vector{Float64}, 
 end
 
 """
-    orbital_elements_to_eci(coes)
+    orbital_elements_to_rv(coes, μ)
 
 Convert classical Keplerian orbital elements to ECI position and velocity vectors.
 
@@ -157,7 +157,7 @@ end
 ##################################################
 
 """
-    sma_to_orbit_period(a_km)
+    sma_to_orbit_period(a_km, μ)
 
 Convert semi-major axis to orbit period
 
@@ -173,7 +173,7 @@ function sma_to_orbit_period(a_km::Float64, μ::Float64)
 end
 
 """
-    orbit_period_to_sma(T_sec)
+    orbit_period_to_sma(T_sec, μ)
 
 Convert orbit period to semi-major axis
 

@@ -62,7 +62,7 @@ end
 """
     state_from_oe(q, ω, t, orbital_elements)
 
-Create a State from orbital elements, automatically computing r_eci and v_eci.
+Create a State struct from orbital elements, automatically computing r_eci and v_eci.
 
 # Arguments
 - `q::Vector{Float64}`: Quaternion [q0, q1, q2, q3] (scalar-first)
