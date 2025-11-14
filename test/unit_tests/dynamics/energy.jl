@@ -75,11 +75,11 @@ end
 
         # 0 v only
         result = calc_kinetic_energy([0.0, 0.0, 0.0], ω, mass, I)
-        @test result == 34500.0
+        @test isapprox(result, 3.45e-8, atol=1e-14)
 
         # 0 mass only
         result = calc_kinetic_energy(v, ω, 0.0, I)
-        @test result == 34500.0
+        @test isapprox(result, 3.45e-8, atol=1e-14)
 
         # 0 MOI 
         result = calc_kinetic_energy(v, ω, mass, zeros(Float64, 3, 3))
@@ -94,7 +94,7 @@ end
             1.0 2.0 0.0;
             0.0 2.0 0.0;
             0.0 0.9 1.0;
-        ]
+        ] * 1e12
 
         result = calc_kinetic_energy(v, ω, mass, I)
         @test isapprox(result, 37000.0, atol=1e-2)

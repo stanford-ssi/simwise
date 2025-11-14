@@ -62,7 +62,6 @@ Compute total energy (potential currently only under gravity)
 # Returns
 - `energy::Float64`: Energy [MJ]
 """
-
 function total_energy(state::State, params::Parameters, μ::Float64)
     r = state.r_eci * 1e3 # Turns m into km
     v = state.v_eci * 1e3 # Turns m/s into km/s
