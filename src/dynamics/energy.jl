@@ -10,9 +10,9 @@ using ..Satellite: Parameters, State
 Compute potential energy (currently only gravity). (Schaub 9.76)
 
 # Arguments
-- `r::Vector{Float64}`: Position vector relative to center of central body [km] (typically the earth)
+- `r::Vector{Float64}`: Position vector relative to center of central body [m] (typically the earth)
 - `mass_kg::Float64`: Mass of satellite / rigid body [kg]
-- `μ::Float64`: Gravitational parameter of central body [km3/s2] (typically the earth)
+- `μ::Float64`: Gravitational parameter of central body [m3/s2] (typically the earth)
 
 # Returns
 - `PE::Float64`: Potential Energy [MJ]
@@ -33,7 +33,7 @@ end
 Compute kinetic energy (currently only gravity). (Schaub 4.55)
 
 # Arguments
-- `v::Vector{Float64}`: Velocity vector in ECI [km/s] 
+- `v::Vector{Float64}`: Velocity vector in ECI [m/s] 
 - `ω::Vector{Float64}`: Angular velocity vector in body frame [rad/s]
 - `mass_kg::Float64`: Mass of satellite / rigid body [kg]
 - `I::Matrix{Float64}`: Moment of inertia tensor in body frame [kg*m2]
@@ -42,10 +42,9 @@ Compute kinetic energy (currently only gravity). (Schaub 4.55)
 - `KE::Float64`: Kinetic Energy [MJ]
 """
 function calc_kinetic_energy(v::Vector{Float64}, ω::Vector{Float64}, mass_kg::Float64, I::Matrix{Float64})
-    I_km2 = I * 1e-6 # to go from kg*m2 to kg*km2
     v_norm = norm(v)
     KE_trans = 0.5 * mass_kg * v_norm * v_norm 
-    KE_rot = 0.5 * (transpose(ω) * I_km2 * ω)
+    KE_rot = 0.5 * (transpose(ω) * I * ω)
     return KE_trans + KE_rot
 end
 
@@ -63,11 +62,32 @@ Compute total energy (potential currently only under gravity)
 - `energy::Float64`: Energy [MJ]
 """
 function total_energy(state::State, params::Parameters, μ::Float64)
-    r = state.r_eci * 1e3 # Turns m into km
-    v = state.v_eci * 1e3 # Turns m/s into km/s
+    r = state.r_eci # m
+    v = state.v_eci # m/s
     ω = state.ω
     mass = params.mass # assumes kg
     I = params.inertia_body # kg*m2
 
     return calc_potential_energy(r, mass, μ) + calc_kinetic_energy(v, ω, mass, I)
+end
+
+"""
+    total_energy(r_eci, v_eci, ω, params)
+
+Compute total energy (potential currently only under gravity)
+
+# Arguments
+- `r::Vector{Float64}`: Position vector in ECI [m] 
+- `v::Vector{Float64}`: Velocity vector in ECI [m/s] 
+- `params::Parameters`: Spacecraft parameters
+- `μ::Float64`: Gravitational parameter of central body [m3/s2] (typically the earth)
+
+# Returns
+- `energy::Float64`: Energy [MJ]
+"""
+function total_energy(r_eci::Vector{Float64}, v_eci::Vector{Float64}, ω::Vector{Float64}, params::Parameters, μ::Float64)
+    mass = params.mass # assumes kg
+    I = params.inertia_body # kg*m2
+
+    return calc_potential_energy(r_eci, mass, μ) + calc_kinetic_energy(v_eci, ω, mass, I)
 end

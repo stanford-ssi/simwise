@@ -4,8 +4,11 @@ using LinearAlgebra
 using Simwise.Constants: μ_earth
 using Simwise.Dynamics: rigid_body_derivative
 using Simwise.Math: rk4_step, to_vector
+
+using Simwise.Dynamics: total_energy
 #propagate_keplerian, state_from_oe
 
+μ_earth_km = 398600.0 # km3/s2
 
 @testset "Rigid Body Tests" begin
     @testset "Force No Torque" begin
@@ -221,6 +224,94 @@ end
     
     end
 
+
+    @testset "Energy Conservation Propogation" begin
+
+        @testset "Stationary with gravity" begin
+            
+            begin_time = time()
+            dt = 0.001
+            t_max = 20
+
+            # Initialized with (mass, inertia, force, torque) constructor
+            params = Parameters(
+                1.0, # kg
+                diagm([2.0, 1.0, 4.0]), # Inertia
+                [0.0, 0.0, 0.0], # force for acceleration
+                [0.0, 0.0, 0.0] # torque
+            )
+
+            r0 = [6800.0, 0.0, 0.0]
+            v0 = [0.0, 0.0, 0.0]
+            ω0 = [0.0, 0.0, 0.0]
+
+            state = [
+                r0..., # 0 m
+                v0..., # 0 m/s
+                1.0, 0.0, 0.0, 0.0, # Identity
+                ω0... # 1 rad per second 
+                ]
+
+            @test isapprox(total_energy(r0, v0, ω0, params, μ_earth_km), -58.61764706, atol=0.0001)
+            
+            next_step = propagate(dt, t_max, state, params)
+
+            @test isapprox(total_energy(next_step[1:3], next_step[3:6], next_step[11:13], params, μ_earth_km), -58.61764706, atol=0.0001)
+
+            
+        end
+        
+        @testset "Just spinning" begin
+            
+            begin_time = time()
+            dt = 0.001
+            t_max = 20
+
+            # Initialized with (mass, inertia, force, torque) constructor
+            params = Parameters(
+                1.0, # kg
+                diagm([2.0, 1.0, 4.0]), # Inertia
+                [0.0, 0.0, 0.0], # force for acceleration
+                [0.0, 0.0, 0.0] # torque
+            )
+
+            r0 = [0.0, 0.0, 0.0]
+            v0 = [0.0, 0.0, 0.0]
+            ω0 = [0.1, 0.0, 0.0]
+
+            state = [
+                r0..., # 0 m
+                v0..., # 0 m/s
+                1.0, 0.0, 0.0, 0.0, # Identity
+                ω0... # 1 rad per second 
+                ]
+
+            @test isapprox(total_energy(r0, v0, ω0, params, μ_earth_km), 1.0, atol=0.0001)
+            
+            next_step = propagate(dt, t_max, state, params)
+
+            @test isapprox(total_energy(next_step[1:3], next_step[3:6], next_step[11:13], params, μ_earth_km), 1.0, atol=0.0001)
+
+            
+        end
+
+        @testset "Just acceleration" begin
+            
+        end
+
+        @testset "Angular acceleration" begin
+            
+        end
+
+        @testset "Circular orbit" begin
+            
+        end
+
+        @testset "Elliptical Orbit" begin
+            
+        end
+    end
+# propagate(dt, t_max, initial_state, params)
 
 
 end
