@@ -24,12 +24,12 @@ function calc_potential_energy(r::Vector{Float64}, mass_kg::Float64, μ::Float64
     if r_norm < 1e-6
         return 0
     end
-    
+
     return -μ*mass_kg/r_norm
 end
 
 """
-    calc_kinetic_energy(r, mass_kg, μ)
+    calc_kinetic_energy(v, ω, mass_kg, I)
 
 Compute kinetic energy (currently only gravity). (Schaub 4.55)
 
