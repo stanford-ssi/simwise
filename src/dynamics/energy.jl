@@ -20,6 +20,11 @@ Compute potential energy (currently only gravity). (Schaub 9.76)
 """
 function calc_potential_energy(r::Vector{Float64}, mass_kg::Float64, μ::Float64)
     r_norm = norm(r)
+
+    if r_norm < 1e-6
+        return 0
+    end
+    
     return -μ*mass_kg/r_norm
 end
 
