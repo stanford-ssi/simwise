@@ -1,0 +1,55 @@
+# Rigid Body dynamics
+
+using LinearAlgebra
+
+using ..Satellite: Parameters, State
+using ..Constants: μ_earth
+using ..Math: Quat, quat_mult, hamilton_product
+
+
+"""
+    rigid_body(state, force_eci, torque_body)
+
+Compute attitude state derivatives (quaternion and angular velocity rates).
+
+# Arguments
+- `state::State`: Current state
+- `dt_s::Float64`: Timestep
+- `force_eci::Vector{Float64}`: Total external forces [N·m] (ECI)
+- `torque_body::Vector{Float64}`:  Total external torques in [N·m] (body frame)
+
+# Returns
+- `next_state::State`: Next state after timestep
+- `ω_dot::Vector{Float64}`: Angular acceleration [rad/s^2] (body frame)
+
+# Equations
+- Quaternion kinematics: q_dot = 0.5 * Ω(ω) * q
+- Euler's equation: ω_dot = I^-1 * (τ - ω × (I * ω))
+"""
+
+function rigid_body_derivative(t::Float64, state::Vector{Float64}, parameters::Parameters)
+    v = state[4:6]
+    q = state[7:10]
+    ω = state[11:13]
+    # Position derivative is velocity 
+    r_dot = v
+
+    # Velocity derivative is acceleration (Schaub 2.15)
+    v_dot = parameters.force_eci / parameters.mass
+
+    # Quaternion derivative is based on hamilton product (Schaub 3.111)
+    q_dot = 0.5 * hamilton_product(Quat(q), ω)
+
+    # Angular derivative based on (Schaub 4.34-35)
+    I = parameters.inertia_body
+    I_inv = parameters.inertia_body_inv
+    τ = parameters.torque_body
+    ω_dot = I_inv * (τ - cross(ω, I * ω))
+
+    # println(length(r_dot))
+    # println(length(v_dot))
+    # println(length(q_dot))
+    # println(length(ω_dot))
+
+    return vcat(r_dot, v_dot, q_dot, ω_dot)
+end

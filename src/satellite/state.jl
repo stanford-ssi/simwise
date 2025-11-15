@@ -38,6 +38,11 @@ function State(q::Vector{Float64}, ω::Vector{Float64}, t::Float64, orbital_elem
     return State(q_quat, ω, t, orbital_elements, r_eci, v_eci)
 end
 
+# Defined for just position and velocity motion
+function State(r_eci::Vector{Float64}=zeros(3), v_eci::Vector{Float64}=zeros(3))
+    return State(Quat(), zeros(3), 0.0, zeros(6), r_eci, v_eci)
+end
+
 
 # Operator overloading for RK4 integration
 import Base: +, *
